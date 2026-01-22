@@ -115,5 +115,6 @@
       "linkedin": "https://linkedin.com/company/mintlify"
     }
   },
-  "description": "Zerion is an Ethereum and Solana wallet and developer platform focused on making blockchain data easy to use."
+  "description": "Zerion is an Ethereum and Solana wallet and developer platform focused on making blockchain data easy to use.",
+  "logo": "/images/zerion_logo.png"
 }
