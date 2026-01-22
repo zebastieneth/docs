@@ -1,0 +1,49 @@
+---
+title: NFTs
+description: Access NFT data, collections, and metadata
+---
+
+# NFTs
+
+The NFTs endpoints provide access to non-fungible token data including metadata, collections, and valuations.
+
+## What you can do
+
+<CardGroup cols={2}>
+  <Card title="NFT Search" icon="magnifying-glass">
+    Search for NFTs by name or collection.
+  </Card>
+  <Card title="NFT Details" icon="image">
+    Get comprehensive metadata for a specific NFT.
+  </Card>
+</CardGroup>
+
+## Key Features
+
+- **Rich metadata** — Images, attributes, and descriptions
+- **Collection data** — Collection info, floor prices, and statistics
+- **Multi-chain support** — NFTs across all supported EVM chains
+- **Valuations** — Floor prices and estimated values
+
+## NFT Identifier Format
+
+NFTs are identified using the format: `{chain_id}:{contract_address}:{token_id}`
+
+**Examples:**
+- `ethereum:0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d:1234` (BAYC #1234)
+- `polygon:0x2953399124f0cbb46d2cbacd8a89cf0599974963:12345` (OpenSea Shared Storefront)
+
+## Response Data
+
+Each NFT includes:
+
+| Field | Description |
+|-------|-------------|
+| `id` | Unique NFT identifier |
+| `name` | NFT name or title |
+| `content` | Image/video URLs and preview data |
+| `attributes` | NFT traits and properties |
+| `collection` | Parent collection information |
+| `floor_price` | Current floor price (if available) |
+
+## Available Endpoints

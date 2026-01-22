@@ -1,0 +1,48 @@
+---
+title: DApps
+description: Access decentralized application information
+---
+
+# DApps
+
+The DApps endpoints provide information about decentralized applications integrated with Zerion.
+
+## What you can do
+
+<CardGroup cols={2}>
+  <Card title="List DApps" icon="grid-2">
+    Get all integrated decentralized applications.
+  </Card>
+  <Card title="DApp Details" icon="circle-info">
+    Retrieve detailed information about a specific DApp.
+  </Card>
+</CardGroup>
+
+## Key Features
+
+- **DApp metadata** — Names, descriptions, and icons
+- **Protocol information** — Category and supported chains
+- **External links** — Website, documentation, and social links
+- **Integration details** — How positions are tracked
+
+## Response Data
+
+Each DApp includes:
+
+| Field | Description |
+|-------|-------------|
+| `id` | Unique DApp identifier |
+| `name` | DApp display name |
+| `description` | Brief description of the protocol |
+| `icon` | DApp logo URL |
+| `url` | Official website |
+| `categories` | Protocol categories (DeFi, NFT, etc.) |
+| `chains` | Supported blockchain networks |
+
+## Use Cases
+
+- **Portfolio integration** — Show which DApps a user has interacted with
+- **Position attribution** — Link deposited/staked positions to protocols
+- **Discovery** — Help users find new DeFi protocols
+
+## Available Endpoints

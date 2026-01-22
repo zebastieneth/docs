@@ -1,0 +1,44 @@
+---
+title: Gas
+description: Get current gas prices across supported chains
+---
+
+# Gas
+
+The Gas endpoints provide current gas price information across all supported blockchain networks.
+
+## What you can do
+
+<CardGroup cols={1}>
+  <Card title="Gas Prices" icon="gas-pump">
+    Get current gas prices for all supported chains with multiple speed options.
+  </Card>
+</CardGroup>
+
+## Key Features
+
+- **Multi-chain coverage** — Gas prices for all supported EVM chains
+- **Speed tiers** — Fast, standard, and slow options
+- **USD conversion** — Gas costs converted to fiat currency
+- **Real-time data** — Frequently updated prices
+
+## Response Data
+
+Each chain's gas data includes:
+
+| Field | Description |
+|-------|-------------|
+| `chain` | Chain identifier and relationship |
+| `price` | Gas price in native units (gwei for EVM) |
+| `price_usd` | Gas price converted to USD |
+| `speed` | Transaction speed tier |
+
+## Speed Tiers
+
+| Tier | Description |
+|------|-------------|
+| `fast` | Priority inclusion, typically < 15 seconds |
+| `standard` | Normal inclusion, typically < 1 minute |
+| `slow` | Lower priority, may take several minutes |
+
+## Available Endpoints

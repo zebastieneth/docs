@@ -1,0 +1,124 @@
+---
+title: Supported Blockchains
+description: List of blockchains supported by the Zerion API
+---
+
+# Supported Blockchains
+
+The Zerion API supports data from multiple blockchain networks. Use the `/v1/chains` endpoint to get the current list of supported chains with their IDs.
+
+## Feature Support by Chain
+
+| Chain | Chain ID | Positions | DeFi | NFTs | Swap | Bridge | Transactions |
+|-------|----------|:---------:|:----:|:----:|:----:|:------:|:------------:|
+| Ethereum | `ethereum` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Polygon | `polygon` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Arbitrum | `arbitrum` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Optimism | `optimism` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Base | `base` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| BNB Chain | `binance-smart-chain` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Avalanche | `avalanche` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Gnosis | `xdai` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Fantom | `fantom` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Aurora | `aurora` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| zkSync Era | `zksync-era` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Linea | `linea` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Scroll | `scroll` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Blast | `blast` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Mantle | `mantle` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Solana** | `solana` | ✅ | ⚠️ | ✅ | ✅ | ❌ | ⚠️ |
+
+<Note>
+**Legend:**
+- ✅ Full support
+- ⚠️ Partial support (see notes below)
+- ❌ Not supported
+</Note>
+
+### Solana Limitations
+
+<Warning>
+Solana has the following limitations compared to EVM chains:
+- **DeFi**: Protocol positions (lending, staking, etc.) are not supported
+- **Transactions**: NFT transactions are not currently supported
+- **Bridge**: Cross-chain bridging is not available
+</Warning>
+
+## Getting Chain Information
+
+Use the chains endpoint to get detailed information about each supported chain:
+
+```bash
+curl -u "your_api_key:" \
+  "https://api.zerion.io/v1/chains/"
+```
+
+### Response Example
+
+```json
+{
+  "links": {
+    "self": "https://api.zerion.io/v1/chains/"
+  },
+  "data": [
+    {
+      "type": "chains",
+      "id": "ethereum",
+      "attributes": {
+        "external_id": "eip155:1",
+        "name": "Ethereum",
+        "icon": {
+          "url": "https://chain-icons.s3.amazonaws.com/ethereum.png"
+        },
+        "explorer": {
+          "name": "Etherscan",
+          "url": "https://etherscan.io",
+          "tx_page": "https://etherscan.io/tx/{tx_hash}",
+          "address_page": "https://etherscan.io/address/{address}"
+        },
+        "rpc": {
+          "public_servers_url": ["https://eth.llamarpc.com"]
+        },
+        "flags": {
+          "supports_trading": true,
+          "supports_bridge": true
+        }
+      }
+    }
+  ]
+}
+```
+
+## Filtering by Chain
+
+Most endpoints support filtering by chain using the `filter[chain_ids]` parameter:
+
+```bash
+# Get positions only on Ethereum and Polygon
+curl -u "your_api_key:" \
+  "https://api.zerion.io/v1/wallets/0x.../positions/?filter[chain_ids]=ethereum,polygon"
+```
+
+## Chain-Specific Notes
+
+<AccordionGroup>
+  <Accordion title="Solana">
+    - NFT transactions are not currently supported for Solana addresses
+    - Some DeFi protocols may have limited support
+    - Use the API v2 endpoints for enhanced Solana support
+  </Accordion>
+  <Accordion title="L2 Networks">
+    - Gas prices may differ significantly from Ethereum mainnet
+    - Transaction finality times vary by network
+    - Some newer L2s may have limited historical data
+  </Accordion>
+  <Accordion title="Token Implementations">
+    When filtering by specific tokens, use the format `chain_id:contract_address`:
+    - EVM: `ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48` (USDC on Ethereum)
+    - Solana: `solana:EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v` (USDC on Solana)
+  </Accordion>
+</AccordionGroup>
+
+<Tip>
+The list of supported chains is continuously expanding. Use the `/v1/chains` endpoint to always get the most up-to-date list.
+</Tip>

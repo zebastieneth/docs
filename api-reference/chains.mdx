@@ -1,0 +1,42 @@
+---
+title: Chains
+description: Get information about supported blockchain networks
+---
+
+# Chains
+
+The Chains endpoints provide information about all blockchain networks supported by the Zerion API.
+
+## What you can do
+
+<CardGroup cols={2}>
+  <Card title="List Chains" icon="list">
+    Get all supported blockchain networks with their details.
+  </Card>
+  <Card title="Chain Details" icon="circle-info">
+    Retrieve specific information about a single chain.
+  </Card>
+</CardGroup>
+
+## Key Features
+
+- **Network metadata** — Chain name, icon, and external IDs
+- **Explorer links** — Block explorer URLs with templates for transactions and addresses
+- **RPC endpoints** — Public RPC server URLs
+- **Feature flags** — Trading and bridge support indicators
+
+## Response Data
+
+Each chain includes:
+
+| Field | Description |
+|-------|-------------|
+| `id` | Chain identifier (e.g., `ethereum`, `polygon`) |
+| `name` | Human-readable chain name |
+| `external_id` | CAIP-2 chain ID (e.g., `eip155:1`) |
+| `icon` | Chain logo URL |
+| `explorer` | Block explorer details with URL templates |
+| `rpc` | Public RPC server URLs |
+| `flags` | Feature support (trading, bridging) |
+
+## Available Endpoints

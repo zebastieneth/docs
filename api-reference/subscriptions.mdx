@@ -1,0 +1,63 @@
+---
+title: Transaction Subscriptions
+description: Subscribe to real-time transaction notifications via webhooks
+---
+
+# Transaction Subscriptions
+
+The Subscriptions endpoints enable real-time transaction monitoring via webhooks.
+
+## What you can do
+
+<CardGroup cols={2}>
+  <Card title="Create Subscriptions" icon="plus">
+    Set up webhook subscriptions for wallet transactions.
+  </Card>
+  <Card title="Manage Wallets" icon="wallet">
+    Add or remove wallets from subscriptions.
+  </Card>
+  <Card title="Configure Webhooks" icon="webhook">
+    Update callback URLs and chain filters.
+  </Card>
+  <Card title="Enable/Disable" icon="toggle-on">
+    Control subscription active state.
+  </Card>
+</CardGroup>
+
+## Key Features
+
+- **Real-time notifications** — Get notified when transactions occur
+- **Multi-wallet support** — Monitor multiple wallets per subscription
+- **Chain filtering** — Subscribe to specific chains only
+- **Webhook delivery** — Receive POST requests to your endpoint
+
+## How It Works
+
+1. **Create a subscription** with your webhook callback URL
+2. **Add wallets** you want to monitor
+3. **Configure chains** to filter which networks to watch
+4. **Receive webhooks** when transactions are detected
+
+## Webhook Payload
+
+When a transaction is detected, you'll receive a POST request with:
+
+```json
+{
+  "subscription_id": "sub_123...",
+  "wallet_address": "0x...",
+  "chain_id": "ethereum",
+  "transaction_hash": "0x...",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Common Parameters
+
+| Parameter | Description |
+|-----------|-------------|
+| `subscription_id` | Unique subscription identifier |
+| `callback_url` | Your webhook endpoint URL |
+| `chain_ids` | Chains to monitor (optional, default: all) |
+
+## Available Endpoints

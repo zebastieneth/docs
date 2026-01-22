@@ -1,0 +1,66 @@
+---
+title: Introduction
+description: Welcome to the Zerion API documentation
+---
+
+# Zerion API
+
+The Zerion REST API provides access to the rich Zerion ecosystem, enabling you to build powerful web3 applications with comprehensive blockchain data.
+
+## What you can build
+
+<CardGroup cols={2}>
+  <Card title="Portfolio Tracking" icon="chart-line">
+    Track wallet balances, positions, and historical performance across multiple chains.
+  </Card>
+  <Card title="Transaction History" icon="clock-rotate-left">
+    Fetch detailed transaction history with parsed actions and metadata.
+  </Card>
+  <Card title="Token Data" icon="coins">
+    Access fungible token prices, charts, and market data.
+  </Card>
+  <Card title="NFT Data" icon="image">
+    Retrieve NFT positions, collections, and portfolio valuations.
+  </Card>
+</CardGroup>
+
+## Key Features
+
+- **Multi-chain support** — Access data across 15+ EVM chains and Solana
+- **Real-time data** — Get up-to-date portfolio and market information
+- **Parsed transactions** — Human-readable transaction descriptions and categorization
+- **DeFi positions** — Track lending, staking, and liquidity positions
+- **Gas prices** — Current gas prices across supported chains
+
+## Base URL
+
+All API requests should be made to:
+
+```
+https://api.zerion.io
+```
+
+## Getting Started
+
+<Steps>
+  <Step title="Get your API key">
+    Sign up at [developers.zerion.io](https://developers.zerion.io) to get your API key.
+  </Step>
+  <Step title="Authenticate your requests">
+    Include your API key using HTTP Basic Auth. See the [Authentication](/authentication) page for details.
+  </Step>
+  <Step title="Make your first request">
+    Try fetching a wallet's portfolio using the `/v1/wallets/{address}/portfolio` endpoint.
+  </Step>
+</Steps>
+
+## Need Help?
+
+<CardGroup cols={2}>
+  <Card title="Email Support" icon="envelope" href="mailto:api@zerion.io">
+    Contact us at **api@zerion.io**
+  </Card>
+  <Card title="Discord" icon="discord" href="https://discord.gg/zerion">
+    Join our developer community
+  </Card>
+</CardGroup>

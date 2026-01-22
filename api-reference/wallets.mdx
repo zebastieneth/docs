@@ -1,0 +1,49 @@
+---
+title: Wallets
+description: Retrieve wallet portfolio, positions, transactions, and NFT data
+---
+
+# Wallets
+
+The Wallets endpoints provide comprehensive access to wallet data across multiple blockchains.
+
+## What you can do
+
+<CardGroup cols={2}>
+  <Card title="Portfolio Overview" icon="chart-pie">
+    Get a complete portfolio snapshot including total value and asset distribution.
+  </Card>
+  <Card title="Balance Charts" icon="chart-line">
+    Retrieve historical balance charts for any time period.
+  </Card>
+  <Card title="Positions" icon="coins">
+    List all fungible token positions with current values and PnL.
+  </Card>
+  <Card title="Transactions" icon="clock-rotate-left">
+    Fetch parsed transaction history with human-readable descriptions.
+  </Card>
+  <Card title="NFT Positions" icon="image">
+    Get NFT holdings with floor prices and collection data.
+  </Card>
+  <Card title="PnL Analysis" icon="chart-mixed">
+    Calculate profit and loss across the entire portfolio.
+  </Card>
+</CardGroup>
+
+## Key Features
+
+- **Multi-chain support** — Aggregate data across all supported EVM chains and Solana
+- **Real-time sync** — Use `?sync=true` to force refresh data from blockchains
+- **DeFi positions** — Includes lending, staking, and liquidity positions
+- **Spam filtering** — Filter out spam tokens and transactions
+
+## Common Parameters
+
+| Parameter | Description |
+|-----------|-------------|
+| `address` | Wallet address (EVM or Solana) |
+| `currency` | Currency for value conversion (default: `usd`) |
+| `filter[chain_ids]` | Filter by specific chains |
+| `filter[positions]` | Filter position types: `wallet`, `deposited`, `staked`, `locked`, `borrowed`, etc. |
+
+## Available Endpoints
