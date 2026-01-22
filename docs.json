@@ -1,13 +1,13 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "theme": "maple",
+  "name": "Zerion API",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#2461ED",
+    "light": "#4579f4",
+    "dark": "#06003C"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/images/zerion_logo.png",
   "navigation": {
     "tabs": [
       {
@@ -83,10 +83,6 @@
       ]
     }
   },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
   "navbar": {
     "links": [
       {
@@ -118,5 +114,6 @@
       "github": "https://github.com/mintlify",
       "linkedin": "https://linkedin.com/company/mintlify"
     }
-  }
+  },
+  "description": "Zerion is an Ethereum and Solana wallet and developer platform focused on making blockchain data easy to use."
 }
