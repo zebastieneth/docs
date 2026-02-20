@@ -5,6 +5,53 @@ description: "Make your first API calls in under 5 minutes. Fetch a portfolio, l
 
 This guide walks you through four real API calls so you can see what Zerion returns and how to work with the data. You'll need an API key — grab one free at [developers.zerion.io](https://developers.zerion.io).
 
+## Popular quickstarts
+
+<Tabs>
+  <Tab title="Wallet Data">
+    <CardGroup cols={2}>
+      <Card title="Get a wallet's portfolio" icon="chart-pie" href="#1-get-a-wallets-portfolio">
+        Fetch total value, position breakdown, and daily changes for any address.
+      </Card>
+      <Card title="List fungible positions" icon="coins" href="#2-list-fungible-positions">
+        Get every token a wallet holds with quantities and USD values.
+      </Card>
+    </CardGroup>
+  </Tab>
+  <Tab title="Transactions">
+    <CardGroup cols={2}>
+      <Card title="Get parsed transactions" icon="clock-rotate-left" href="#3-get-parsed-transactions">
+        Fetch human-readable transaction history with filters by type, chain, and date.
+      </Card>
+      <Card title="Subscribe to webhooks" icon="bell" href="#4-subscribe-to-real-time-webhooks">
+        Get instant notifications when wallet transactions occur — no polling.
+      </Card>
+    </CardGroup>
+  </Tab>
+  <Tab title="Market Data">
+    <CardGroup cols={2}>
+      <Card title="Search fungible tokens" icon="magnifying-glass" href="#2-list-fungible-positions">
+        Look up any token by name, get prices, charts, and market data.
+      </Card>
+      <Card title="NFT collections & items" icon="image" href="#2-list-fungible-positions">
+        Retrieve NFT positions, floor prices, and collection metadata.
+      </Card>
+    </CardGroup>
+  </Tab>
+  <Tab title="Trading">
+    <CardGroup cols={2}>
+      <Card title="Get swap quotes" icon="arrow-right-arrow-left" href="#2-list-fungible-positions">
+        Fetch the best swap and bridge offers across chains.
+      </Card>
+      <Card title="Check gas prices" icon="gas-pump" href="#2-list-fungible-positions">
+        Get current gas prices across all supported chains.
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+---
+
 All examples use Vitalik's wallet (`0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045`) so you can copy-paste and run them immediately.
 
 ## 1. Get a wallet's portfolio

@@ -44,8 +44,10 @@
             "iconStyle": "duotone",
             "pages": [
               "supported-blockchains",
+              "endpoints-and-schema",
               "pagination-and-filtering",
-              "error-handling"
+              "error-handling",
+              "spam-filtering"
             ]
           },
           {
@@ -53,14 +55,6 @@
             "icon": "square-terminal",
             "iconStyle": "duotone",
             "openapi": "openapi-v1.yaml"
-          },
-          {
-            "group": "Webhooks",
-            "icon": "bell",
-            "iconStyle": "duotone",
-            "pages": [
-              "webhooks"
-            ]
           }
         ]
       },
@@ -76,26 +70,34 @@
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://developers.zerion.io"
+      "href": "https://dashboard.zerion.io"
+    }
+  },
+  "integrations": {
+    "intercom": {
+      "appId": "odzbbilr"
     }
   },
   "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
+    "options": []
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/zeraborea",
-      "github": "https://github.com/zeriontech",
-      "discord": "https://discord.gg/zerion"
+      "x": "https://x.com/zerion"
+    }
+  },
+  "fonts": {
+    "heading": {
+      "family": "Aeonik Pro",
+      "weight": 700,
+      "source": "/fonts/AeonikPro-VF.woff2",
+      "format": "woff2"
+    },
+    "body": {
+      "family": "Aeonik Pro",
+      "weight": 400,
+      "source": "/fonts/AeonikPro-VF.woff2",
+      "format": "woff2"
     }
   },
   "description": "Zerion is an Ethereum and Solana wallet and developer platform focused on making blockchain data easy to use."

@@ -1,6 +1,76 @@
 ---
 title: "Changelog"
 description: "Latest updates, new features, and improvements to the Zerion API."
+rss: true
 ---
 
-Stay up to date with the latest changes to the Zerion API. Subscribe to our [Discord](https://discord.gg/zerion) for real-time announcements.
+<Update label="February 9, 2026" description="Documentation fix" tags={["Fix"]}>
+  ## Transactions API — OpenAPI documentation fix
+
+  Fixed OpenAPI schema inconsistencies between documentation and implementation for the `/transactions` endpoints. **No breaking changes** — API responses remain unchanged, only the OpenAPI spec was corrected.
+
+  **Nullable fields corrected:**
+  - **Fee**: `fungible_info`, `price`, `value` marked as nullable
+  - **Refund**: `fungible_info`, `price`, `value` marked as nullable
+  - **Transfer**: `price`, `value` marked as nullable
+  - **Fungible Info**: `icon` marked as nullable
+
+  **Missing fields documented:**
+  - Transaction attributes: `address`, `refund`, `delegations`
+  - Fungible Info: `id`
+
+  **Migration:** No client changes required. Clients using generated models should ensure they handle `null` values, as these were already nullable in practice.
+</Update>
+
+<Update label="February 4, 2026" description="New feature" tags={["Feature"]}>
+  ## Chart periods — new time values
+
+  Added two new time period values to the `chart_period` parameter:
+
+  - **`6months`** — 6-month chart period
+  - **`5years`** — 5-year chart period
+
+  These complement the existing options: `hour`, `day`, `week`, `month`, `3months`, `year`, and `max`.
+
+  **Affected endpoints:**
+  - `GET /wallets/{address}/charts/{chart_period}`
+  - `GET /fungibles/{fungible_id}/charts/{chart_period}`
+  - `GET /fungibles/by-implementation/charts/{chart_period}`
+
+  ```bash
+  curl -u "YOUR_API_KEY:" \
+    "https://api.zerion.io/v1/wallets/0xd8dA.../charts/6months"
+  ```
+</Update>
+
+<Update label="January 7, 2026" description="New feature" tags={["Feature"]}>
+  ## Portfolio API — sync parameter
+
+  Added new `sync` query parameter to the `/wallets/{address}/portfolio` endpoint.
+
+  - **`true`**: Triggers a position sync and waits up to 30 seconds for fresh portfolio data before responding.
+  - **`false`** (default): Returns immediately with cached data.
+
+  ```bash
+  curl -u "YOUR_API_KEY:" \
+    "https://api.zerion.io/v1/wallets/0xd8dA.../portfolio?sync=true"
+  ```
+
+  Clients should configure appropriate timeout settings when using `sync=true`.
+</Update>
+
+<Update label="November 19, 2025" description="New feature" tags={["Feature"]}>
+  ## Positions API — sync parameter
+
+  Added new `sync` query parameter to the `/wallets/{address}/positions` endpoint.
+
+  - **`true`**: Waits up to 30 seconds for protocol positions to be updated and returns fresh data.
+  - **`false`** (default): Returns immediately with available position data.
+
+  ```bash
+  curl -u "YOUR_API_KEY:" \
+    "https://api.zerion.io/v1/wallets/0xd8dA.../positions?sync=true"
+  ```
+
+  Clients should configure appropriate timeout settings when using `sync=true`.
+</Update>

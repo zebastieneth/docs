@@ -1,0 +1,53 @@
+---
+title: "Spam Filtering"
+description: "How Zerion detects and filters spam tokens across positions and transactions."
+---
+
+Zerion's API includes a built-in spam detection system that flags low-quality or deceptive assets using the `is_trash` flag. This lets you filter out spam tokens across endpoints like `/positions` and `/transactions` without building your own detection logic.
+
+## How it works
+
+The spam detection system uses multiple layers:
+
+- **Heuristics** — Analysis of on-chain behaviors including mass airdrops, impersonation of popular assets (e.g., mimicking name/symbol), and suspicious transfer patterns.
+- **External intelligence** — Multiple third-party data providers to assess token quality.
+- **Community feedback** — Users and partners can report false positives or unflagged spam for review.
+- **Internal rules** — Proprietary logic applied across the system to ensure consistent filtering across APIs and frontend views.
+
+## Using the `filter[trash]` parameter
+
+The `filter[trash]` parameter controls spam filtering on supported endpoints:
+
+| Value | Behavior |
+|-------|----------|
+| `only_non_trash` | Only return non-spam assets (hides spam) |
+| `only_trash` | Only return spam assets |
+| `no_filter` | Return everything, spam included |
+
+### Default behavior
+
+<Note>
+Defaults differ by endpoint:
+- **Positions**: defaults to `only_non_trash` (spam hidden)
+- **Transactions**: defaults to `no_filter` (spam included)
+</Note>
+
+### Examples
+
+```bash
+# Get positions with spam hidden (default)
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA.../positions/?filter[trash]=only_non_trash"
+
+# Get only spam tokens
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA.../positions/?filter[trash]=only_trash"
+
+# Get everything including spam
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA.../positions/?filter[trash]=no_filter"
+```
+
+## Reporting misclassifications
+
+If you notice an asset that's incorrectly flagged or missing a flag, reach out via the support chat or email us at [api@zerion.io](mailto:api@zerion.io). We actively refine the filter based on evolving behavior and ecosystem feedback.

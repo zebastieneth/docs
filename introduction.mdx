@@ -1,84 +1,155 @@
 ---
-title: "Introduction"
+title: "Zerion API"
 description: "A high-performance API for onchain data. Zerion delivers fast, normalized wallet and DeFi data across EVM chains and Solana, powering reliable apps from day one to global scale."
+sidebarTitle: "Introduction"
 ---
 
-Zerion API is a single, normalized interface for wallet-level blockchain data across 15+ EVM chains and Solana. Instead of raw chain data, you get interpreted financial information — values, types, relationships, and metadata in a ready-to-use, human-readable format.
+Zerion API gives developers a single, normalized interface to access wallet-level blockchain data across all major EVM chains and Solana. Our mission is to make onchain data as easy to use as any traditional API — no nodes to manage, no chain-specific parsing, no raw logs to decode. Just clean, interpreted financial data ready to power your application.
 
-Battle-tested in production by consumer applications serving millions of users, the API delivers fresh data within milliseconds of new blocks hitting the chain.
+<img src="/images/hero-banner.png" alt="Zerion API — Enterprise-Grade Wallet Data API" style={{ borderRadius: "0.75rem", maxWidth: "680px", width: "100%", marginBottom: "1.5rem" }} />
 
-<CardGroup cols={3}>
-  <Card title="Get your API key" icon="key" href="https://developers.zerion.io">
-    Free to start — 300 calls/day
-  </Card>
-  <Card title="Authentication" icon="lock" href="/authentication">
-    Set up HTTP Basic Auth
-  </Card>
-  <Card title="Supported chains" icon="link" href="/supported-blockchains">
-    15+ EVM chains and Solana
-  </Card>
-</CardGroup>
+## Get started in seconds
 
-## What you can do
+Getting an API key is simple — log into the [developer dashboard](https://developers.zerion.io), create a key, and you're ready to go. Every endpoint in our docs has an **interactive playground** where you can test requests and see real responses directly in the browser, no setup required.
 
 <CardGroup cols={2}>
-  <Card title="Portfolio tracking" icon="chart-pie">
-    Get a complete view of any wallet's holdings — fungible tokens, DeFi positions across 8,000+ protocols, and NFTs — with USD valuations, all from a single call.
+  <Card title="Get your API key" icon="key" href="https://dashboard.zerion.io">
+    Log into the dashboard and generate a free key. 300 calls/day to start.
   </Card>
-  <Card title="Transaction history" icon="clock-rotate-left">
-    Fetch full transaction history with interpreted financial meaning. Every transaction is parsed into human-readable actions like "Swapped 1 ETH for 2,000 USDC".
-  </Card>
-  <Card title="Profit & Loss" icon="chart-line">
-    Calculate net invested amounts, realized and unrealized gains, and overall PnL for any wallet, with full historical context.
-  </Card>
-  <Card title="Token & NFT data" icon="coins">
-    Access prices, charts, market data for fungible tokens, and floor prices, metadata, and collection info for NFTs — including long-tail assets.
-  </Card>
-  <Card title="Swaps & bridging" icon="arrow-right-arrow-left">
-    Get swap and bridge quotes across chains and execute trades through a unified interface.
-  </Card>
-  <Card title="Real-time webhooks" icon="bell">
-    Subscribe to wallet activity and get instant notifications via webhooks when transactions occur — no polling required.
+  <Card title="Try it live" icon="play" href="/quickstart">
+    Test any endpoint with the interactive playground — right from the docs.
   </Card>
 </CardGroup>
 
-## Quick start
+## Start building with Zerion
 
-Get up and running in under 5 minutes — fetch a portfolio, list positions, read parsed transactions, and set up real-time webhooks.
+<Tabs>
+  <Tab title="Wallet Analytics">
+    Get a complete picture of any wallet — total value, asset breakdown, and historical charts across all supported chains in a single call.
 
-```bash
-curl -u "YOUR_API_KEY:" \
-  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/portfolio"
-```
+    ```bash
+    curl -u "YOUR_API_KEY:" \
+      "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/portfolio"
+    ```
 
-<Card title="Follow the full Quickstart guide" icon="arrow-right" href="/quickstart">
-  Four hands-on API calls with code in cURL, JavaScript, and Python.
+    <CardGroup cols={2}>
+      <Card title="Portfolio endpoint" icon="chart-pie" href="/quickstart#1-get-a-wallets-portfolio">
+        Aggregated wallet value across all chains with currency conversion.
+      </Card>
+      <Card title="Positions endpoint" icon="layer-group" href="/quickstart#2-list-fungible-positions">
+        Every token, DeFi position, and NFT a wallet holds — with real-time valuations.
+      </Card>
+    </CardGroup>
+  </Tab>
+
+  <Tab title="Transaction History">
+    Get full transaction history interpreted into human-readable actions like "Swapped 1 ETH for 2,000 USDC". Filter by type, chain, and date range.
+
+    ```bash
+    curl -u "YOUR_API_KEY:" \
+      "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/transactions/?filter[operation_types]=trade"
+    ```
+
+    <CardGroup cols={2}>
+      <Card title="Transactions endpoint" icon="receipt" href="/quickstart#3-get-parsed-transactions">
+        Parsed, human-readable transaction history with transfer details, fees, and approvals.
+      </Card>
+      <Card title="Real-time webhooks" icon="satellite-dish" href="/quickstart#4-subscribe-to-real-time-webhooks">
+        Subscribe to wallet activity and get instant notifications — no polling.
+      </Card>
+    </CardGroup>
+  </Tab>
+
+  <Tab title="DeFi Protocols">
+    Track positions across 8,000+ DeFi protocols — lending, staking, LPs, vaults, and more. Zerion interprets raw contract data into clean, structured positions.
+
+    ```bash
+    curl -u "YOUR_API_KEY:" \
+      "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/positions/?filter[position_types]=loan,staked,deposit"
+    ```
+
+    <CardGroup cols={2}>
+      <Card title="DeFi positions" icon="cubes" href="/quickstart#2-list-fungible-positions">
+        Staked assets, LP tokens, lending positions, and vaults — all normalized.
+      </Card>
+      <Card title="DApp metadata" icon="grid-2" href="/endpoints-and-schema#dapps">
+        Protocol names, icons, and categories for every DeFi app.
+      </Card>
+    </CardGroup>
+  </Tab>
+
+  <Tab title="Token & NFT Data">
+    Access prices, charts, market data, and metadata for fungible tokens and NFTs — including long-tail assets and full collection details.
+
+    ```bash
+    curl -u "YOUR_API_KEY:" \
+      "https://api.zerion.io/v1/fungibles/eth"
+    ```
+
+    <CardGroup cols={2}>
+      <Card title="Fungibles endpoint" icon="coins" href="/endpoints-and-schema#fungibles">
+        Token prices, charts, market cap, and implementation details across chains.
+      </Card>
+      <Card title="NFTs endpoint" icon="image" href="/endpoints-and-schema#nfts">
+        NFT metadata, floor prices, collection info, and wallet holdings.
+      </Card>
+    </CardGroup>
+  </Tab>
+
+  <Tab title="Swaps & Bridging">
+    Get quotes and execute cross-chain trades through a single unified interface. The API handles routing across DEXs and bridges automatically.
+
+    ```bash
+    curl -u "YOUR_API_KEY:" \
+      "https://api.zerion.io/v1/swap/fungibles/"
+    ```
+
+    <CardGroup cols={2}>
+      <Card title="Swap endpoint" icon="arrow-right-arrow-left" href="/endpoints-and-schema#swap--bridge">
+        Get optimal swap routes across DEXs with slippage and gas estimates.
+      </Card>
+      <Card title="Gas prices" icon="gas-pump" href="/endpoints-and-schema#gas">
+        Real-time gas estimates for supported chains to optimize transaction timing.
+      </Card>
+    </CardGroup>
+  </Tab>
+
+  <Tab title="Profit & Loss">
+    Calculate net invested amounts, realized and unrealized gains for any wallet with full historical context and chart data.
+
+    ```bash
+    curl -u "YOUR_API_KEY:" \
+      "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/pnl"
+    ```
+
+    <CardGroup cols={2}>
+      <Card title="PnL endpoint" icon="chart-line" href="/endpoints-and-schema#wallets">
+        Net profit, invested amount, and realized/unrealized gains per wallet.
+      </Card>
+      <Card title="Charts endpoint" icon="chart-area" href="/endpoints-and-schema#wallets">
+        Historical portfolio value over configurable time periods (hour to max).
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+## AI-powered documentation
+
+These docs are available as an MCP server. Connect your AI assistant and it can search endpoints, parameters, and guides in real-time while you build — no copy-pasting needed.
+
+<Card title="Set up MCP in 30 seconds" icon="plug" href="/build-with-ai">
+  Connect Claude, Cursor, or VS Code to query our full docs and API spec automatically. Ask questions like "How do I filter positions by chain?" and get instant, accurate answers with working code.
 </Card>
-
-## Base URL
-
-All API requests use a single base URL:
-
-```
-https://api.zerion.io
-```
-
-## Why Zerion
-
-| | |
-|---|---|
-| **Millisecond freshness** | Data updates within milliseconds of new blocks — no stale reads. |
-| **Battle-tested reliability** | The same infrastructure powering the Zerion app used by millions. |
-| **Unified schema** | One consistent format across all chains. No node management, no chain-specific parsing. |
-| **Interpreted data** | Not raw logs — you get parsed, categorized, human-readable financial data. |
 
 ## Need help?
 
+We provide world-class developer support. Reach out through the **chat widget** available right here in the docs or in the [dashboard portal](https://dashboard.zerion.io) to get direct assistance from our team. If your plan includes it, you also get priority support over **Telegram** and **Slack** — check the [dashboard](https://dashboard.zerion.io) for plan details.
+
 <CardGroup cols={2}>
-  <Card title="Email support" icon="envelope" href="mailto:api@zerion.io">
-    Reach us at api@zerion.io for technical questions.
+  <Card title="Chat with us" icon="message" href="https://dashboard.zerion.io">
+    Use the chat widget in the docs or dashboard for fast, direct support from the Zerion team.
   </Card>
-  <Card title="Discord community" icon="discord" href="https://discord.gg/zerion">
-    Connect with the Zerion team and other developers.
+  <Card title="Email support" icon="envelope" href="mailto:api@zerion.io">
+    Reach us at api@zerion.io for technical questions and integration help.
   </Card>
 </CardGroup>

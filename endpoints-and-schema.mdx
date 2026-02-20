@@ -1,0 +1,140 @@
+---
+title: "Endpoints & Schema"
+description: "Overview of all Zerion API endpoint categories, response schemas, and how to explore the API structure."
+---
+
+The Zerion API provides real-time, normalized access to onchain data through a set of RESTful endpoints. Each endpoint returns structured JSON following the [JSON:API](https://jsonapi.org/) specification, with consistent patterns for pagination, filtering, and relationships.
+
+## Endpoint categories
+
+### Wallets
+
+The wallets endpoint is fundamental to building wallet applications. It provides access to:
+
+- **Portfolio** — Aggregated wallet value across all chains and positions
+- **Positions** — Individual token holdings, DeFi protocol positions, and NFTs with valuations
+- **Transactions** — Full parsed transaction history with human-readable interpretations
+- **Charts** — Historical portfolio value over configurable time periods
+
+```bash
+# Get a wallet's complete portfolio
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA.../portfolio"
+```
+
+### Fungibles
+
+Returns metadata, pricing, and market data for fungible tokens. Supports both paginated lists and individual lookups by unique identifier.
+
+- List and search fungible assets with filters
+- Get detailed info for a specific token by ID
+- Retrieve price charts over multiple time periods
+- Look up tokens by chain and contract address
+
+```bash
+# Get token details by ID
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/fungibles/eth"
+```
+
+### Chains
+
+Provides a complete list of all supported blockchains and enables lookup by chain identifier. Use this to dynamically populate chain selectors or validate chain IDs before making other API calls.
+
+```bash
+# List all supported chains
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/chains"
+```
+
+### NFTs
+
+Access NFT data including individual tokens and collections. Requires specifying references (wallet address or collection) to scope results.
+
+```bash
+# Get NFTs for a wallet
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA.../nft-positions"
+```
+
+### Swap & Bridge
+
+Get quotes and execute cross-chain swaps through a single unified interface. The API handles routing across DEXs and bridges.
+
+### Gas
+
+Retrieve current gas price estimates for supported chains, useful for displaying fee estimates or optimizing transaction timing.
+
+```bash
+# Get gas prices for Ethereum
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/chains/ethereum/gas-prices"
+```
+
+### DApps
+
+Look up metadata for decentralized applications, including names, icons, and categories. DApp info appears in position and transaction data to provide context.
+
+### Subscriptions (Webhooks)
+
+Create and manage webhook subscriptions to receive real-time notifications when wallet transactions occur — no polling required.
+
+```bash
+# Create a transaction subscription
+curl -u "YOUR_API_KEY:" \
+  -X POST "https://api.zerion.io/v1/wallets/0xd8dA.../transaction-subscriptions" \
+  -H "Content-Type: application/json" \
+  -d '{"data": {"type": "transaction-subscriptions", "attributes": {"webhook_url": "https://your-app.com/webhook"}}}'
+```
+
+## Response schema
+
+All responses follow a consistent structure:
+
+```json
+{
+  "links": {
+    "self": "https://api.zerion.io/v1/...",
+    "next": "https://api.zerion.io/v1/...?page[after]=..."
+  },
+  "data": [
+    {
+      "type": "resource-type",
+      "id": "unique-id",
+      "attributes": { },
+      "relationships": { }
+    }
+  ]
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `links` | Pagination links — `self` for the current page, `next` for the next page (if available) |
+| `data` | Array of resource objects (or a single object for detail endpoints) |
+| `type` | Resource type identifier (e.g., `positions`, `transactions`, `fungibles`) |
+| `id` | Unique identifier for the resource |
+| `attributes` | The resource's data fields |
+| `relationships` | Related resources with links for fetching |
+
+### Exploring schemas in the docs
+
+Each endpoint in the [REST API Reference](/api-reference) section includes:
+
+- **Interactive playground** — Send real requests and inspect responses directly in the browser
+- **Response examples** — Click on response status codes (200, 400, etc.) to see example payloads
+- **Schema details** — Expand any field to see its type, description, and whether it's nullable
+
+<Tip>
+Use the dropdown menus on response examples to switch between different response codes and see the full schema for each case.
+</Tip>
+
+## OpenAPI specification
+
+The full API is defined in an OpenAPI 3.0.3 specification. You can use it to:
+
+- Generate client libraries in any language
+- Import into tools like Postman or Insomnia
+- Power AI assistants via [MCP](/build-with-ai)
+
+The spec is always kept in sync with the live API and powers the interactive documentation you see in the REST API Reference section.
