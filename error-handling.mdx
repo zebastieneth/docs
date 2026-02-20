@@ -1,0 +1,171 @@
+---
+title: "Error Handling"
+description: "Understand Zerion API error responses, HTTP status codes, rate limits, and best practices for retry logic."
+---
+
+The Zerion API uses standard HTTP status codes and returns structured error responses. This page covers what to expect and how to handle errors gracefully.
+
+## Error response format
+
+All errors return a JSON object with an `errors` array:
+
+```json
+{
+  "errors": [
+    {
+      "title": "Short error description",
+      "detail": "A longer explanation of what went wrong"
+    }
+  ]
+}
+```
+
+## HTTP status codes
+
+| Status | Meaning | When it happens |
+|--------|---------|-----------------|
+| `200` | Success | Request completed successfully |
+| `400` | Bad Request | Malformed parameters — check filter values, missing required fields, or invalid formats |
+| `401` | Unauthorized | Missing or invalid API key |
+| `404` | Not Found | The requested resource doesn't exist (single-resource endpoints only) |
+| `429` | Too Many Requests | Rate limit exceeded |
+
+### 400 — Bad Request
+
+Returned when query parameters are malformed or invalid. Check the `detail` field for specifics.
+
+```json
+{
+  "errors": [
+    {
+      "title": "Parameter is malformed",
+      "detail": "Some validation errors will be described here"
+    }
+  ]
+}
+```
+
+**Common causes:**
+- Invalid `filter[chain_ids]` value (e.g., a chain ID that doesn't exist)
+- `page[size]` outside the 1–100 range
+- Missing required parameters (e.g., `filter[references]` on the NFTs endpoint)
+- Malformed `filter[min_mined_at]` timestamp (must be exactly 13 digits, in milliseconds)
+
+### 401 — Unauthorized
+
+Returned when the API key is missing, invalid, or incorrectly encoded.
+
+```json
+{
+  "errors": [
+    {
+      "title": "Unauthorized Error",
+      "detail": "The API key is invalid, please, make sure that you are using a valid key"
+    }
+  ]
+}
+```
+
+**Common causes:**
+- Missing `Authorization` header
+- API key not Base64-encoded correctly — remember to append a colon: `base64("your_key:")`
+- Expired or revoked API key
+
+<Tip>
+Test your encoding: `echo -n "your_api_key:" | base64` should produce the value you pass after `Basic `.
+</Tip>
+
+### 404 — Not Found
+
+Returned on single-resource endpoints when the ID doesn't match any record.
+
+```json
+{
+  "errors": [
+    {
+      "title": "Resource was not found",
+      "detail": "Requested resource was not found, try later"
+    }
+  ]
+}
+```
+
+This only applies to endpoints like `/v1/fungibles/{fungible_id}` or `/v1/nfts/{nft_id}`. List endpoints return an empty `data` array instead of a 404.
+
+### 429 — Too Many Requests
+
+Returned when you exceed your plan's rate limit.
+
+```json
+{
+  "errors": [
+    {
+      "title": "Too many requests",
+      "detail": "Your request had been throttled"
+    }
+  ]
+}
+```
+
+## Rate limits
+
+Rate limits depend on your subscription plan. The free tier allows **300 calls/day at 1 request per second**. Higher plans increase both the daily quota and requests-per-second ceiling.
+
+### Handling rate limits
+
+When you receive a `429` response, back off and retry after a delay:
+
+<CodeGroup>
+
+```javascript JavaScript
+async function fetchWithRetry(url, apiKey, maxRetries = 3) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const response = await fetch(url, {
+      headers: { Authorization: `Basic ${btoa(`${apiKey}:`)}` }
+    });
+
+    if (response.status !== 429) return response;
+
+    const delay = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+
+  throw new Error("Rate limit exceeded after retries");
+}
+```
+
+```python Python
+import requests
+import time
+
+def fetch_with_retry(url, api_key, max_retries=3):
+    for attempt in range(max_retries + 1):
+        response = requests.get(url, auth=(api_key, ""))
+
+        if response.status_code != 429:
+            return response
+
+        delay = 2 ** attempt  # 1s, 2s, 4s
+        time.sleep(delay)
+
+    raise Exception("Rate limit exceeded after retries")
+```
+
+</CodeGroup>
+
+## Best practices
+
+<AccordionGroup>
+  <Accordion title="Use exponential backoff for retries">
+    When retrying after a `429` or `5xx` error, increase the delay between attempts exponentially (e.g., 1s, 2s, 4s). This prevents overwhelming the API during high-traffic periods.
+  </Accordion>
+  <Accordion title="Only retry on appropriate status codes">
+    Retry on `429` (rate limit) and `5xx` (server errors). Do **not** retry `400` (bad request) or `401` (unauthorized) — these require fixing the request itself.
+  </Accordion>
+  <Accordion title="Validate parameters before sending">
+    Check that `page[size]` is between 1–100, timestamps are 13-digit milliseconds, and chain IDs match the [supported chains](/supported-blockchains). This avoids unnecessary `400` errors.
+  </Accordion>
+  <Accordion title="Use webhooks instead of polling">
+    If you need to monitor wallet activity, use [transaction subscriptions](/quickstart#4-subscribe-to-real-time-webhooks) instead of polling the transactions endpoint. This reduces your API usage and gives you faster notifications.
+  </Accordion>
+</AccordionGroup>

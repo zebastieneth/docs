@@ -1,0 +1,229 @@
+---
+title: "Pagination & Filtering"
+description: "How to paginate through results, filter data, sort responses, and set currency across Zerion API endpoints."
+---
+
+Most Zerion API list endpoints return paginated results and support filtering. This page covers the patterns you'll use across the API.
+
+## Pagination
+
+List endpoints use **cursor-based pagination**. Each response includes a `links` object with URLs for navigating between pages.
+
+### How it works
+
+1. Make your initial request without any page parameter
+2. Check `links.next` in the response — if present, there are more results
+3. Follow the `links.next` URL directly to get the next page
+4. Repeat until `links.next` is absent
+
+```json Response with pagination
+{
+  "links": {
+    "self": "https://api.zerion.io/v1/wallets/0x.../positions/?page[size]=10",
+    "next": "https://api.zerion.io/v1/wallets/0x.../positions/?page[size]=10&page[after]=eyJhZnR..."
+  },
+  "data": [...]
+}
+```
+
+### Page size
+
+Control the number of results per page with `page[size]`:
+
+```bash
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0x.../positions/?page[size]=25"
+```
+
+| Parameter | Type | Default | Min | Max |
+|-----------|------|---------|-----|-----|
+| `page[size]` | integer | `100` | `1` | `100` |
+
+### Iterating through all pages
+
+<CodeGroup>
+
+```javascript JavaScript
+async function fetchAll(url, apiKey) {
+  const results = [];
+
+  while (url) {
+    const response = await fetch(url, {
+      headers: { Authorization: `Basic ${btoa(`${apiKey}:`)}` }
+    });
+    const json = await response.json();
+    results.push(...json.data);
+    url = json.links.next || null;
+  }
+
+  return results;
+}
+
+const positions = await fetchAll(
+  "https://api.zerion.io/v1/wallets/0x.../positions/?page[size]=100",
+  "YOUR_API_KEY"
+);
+```
+
+```python Python
+import requests
+
+def fetch_all(url, api_key):
+    results = []
+
+    while url:
+        response = requests.get(url, auth=(api_key, ""))
+        data = response.json()
+        results.extend(data["data"])
+        url = data["links"].get("next")
+
+    return results
+
+positions = fetch_all(
+    "https://api.zerion.io/v1/wallets/0x.../positions/?page[size]=100",
+    "YOUR_API_KEY"
+)
+```
+
+</CodeGroup>
+
+<Warning>
+Do not construct `page[after]` cursor values manually. Always use the full URL from `links.next` — cursor tokens are opaque and may change format without notice.
+</Warning>
+
+## Filtering
+
+Filter parameters use the `filter[field]` syntax. Multiple values are comma-separated.
+
+### Common filters
+
+#### `filter[chain_ids]`
+
+Limit results to specific blockchains. Available on most endpoints.
+
+```bash
+# Positions on Ethereum and Base only
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0x.../positions/?filter[chain_ids]=ethereum,base"
+```
+
+#### `filter[position_types]`
+
+Filter positions by type. Available on the positions endpoint.
+
+```bash
+# Only DeFi deposits and staked positions
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0x.../positions/?filter[position_types]=deposit,staked"
+```
+
+Values: `wallet`, `deposit`, `loan`, `locked`, `staked`, `reward`, `investment`
+
+#### `filter[operation_types]`
+
+Filter transactions by operation. Available on the transactions endpoint.
+
+```bash
+# Only trades and sends
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0x.../transactions/?filter[operation_types]=trade,send"
+```
+
+Values: `approve`, `burn`, `claim`, `delegate`, `deploy`, `deposit`, `execute`, `mint`, `receive`, `revoke`, `send`, `trade`, `withdraw`
+
+#### `filter[trash]`
+
+Filter out spam tokens and transactions.
+
+```bash
+# Include spam tokens (excluded by default on positions)
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0x.../positions/?filter[trash]=no_filter"
+```
+
+Values: `only_trash`, `only_non_trash`, `no_filter`
+
+<Note>
+Default behavior differs by endpoint: positions default to `only_non_trash` (spam hidden), while transactions default to `no_filter` (spam included).
+</Note>
+
+#### `filter[search_query]`
+
+Full-text search. Available on the transactions and fungibles endpoints.
+
+```bash
+# Search fungibles by name
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/fungibles/?filter[search_query]=ethereum"
+```
+
+#### `filter[fungible_ids]`
+
+Filter by specific fungible asset IDs.
+
+```bash
+# Positions for specific tokens only
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0x.../positions/?filter[fungible_ids]=eth,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+```
+
+#### Time-range filters
+
+Filter transactions by timestamp. Available on the transactions endpoint.
+
+```bash
+# Transactions after a specific date (timestamp in milliseconds)
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0x.../transactions/?filter[min_mined_at]=1704067200000"
+```
+
+| Parameter | Description |
+|-----------|-------------|
+| `filter[min_mined_at]` | Only transactions after this timestamp (ms) |
+| `filter[max_mined_at]` | Only transactions before this timestamp (ms) |
+
+### All filters by endpoint
+
+| Filter | Positions | Transactions | Fungibles | NFTs | Gas |
+|--------|:---------:|:------------:|:---------:|:----:|:---:|
+| `chain_ids` | ✅ | ✅ | — | — | ✅ |
+| `position_types` | ✅ | — | — | — | — |
+| `operation_types` | — | ✅ | — | — | — |
+| `asset_types` | — | ✅ | — | — | — |
+| `trash` | ✅ | ✅ | — | — | — |
+| `search_query` | — | ✅ | ✅ | — | — |
+| `fungible_ids` | ✅ | ✅ | ✅ | — | — |
+| `dapp_ids` | ✅ | — | — | — | — |
+| `min/max_mined_at` | — | ✅ | — | — | — |
+| `gas_types` | — | — | — | — | ✅ |
+
+## Sorting
+
+Some endpoints support a `sort` parameter. A `-` prefix means descending order.
+
+```bash
+# Positions sorted by value, highest first
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0x.../positions/?sort=-value"
+```
+
+### Sort options by endpoint
+
+| Endpoint | Sort values | Default |
+|----------|-------------|---------|
+| Positions | `value`, `-value` | `value` |
+| NFT Positions | `created_at`, `-created_at`, `floor_price`, `-floor_price` | — |
+| NFT Collections | `min_changed_at`, `-max_changed_at`, `total_floor_price`, `-total_floor_price` | — |
+| Fungibles | `market_data.market_cap`, `market_data.price.last`, `market_data.price.percent_change_1d`, `market_data.price.percent_change_30d`, `market_data.price.percent_change_90d`, `market_data.price.percent_change_365d` (each with `-` variant) | — |
+| Swap Offers | `amount`, `time` | `amount` |
+
+## Currency
+
+Most endpoints that return monetary values accept a `currency` parameter. Default is `usd`.
+
+```bash
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0x.../portfolio?currency=eur"
+```
+
+Supported currencies: `usd`, `eur`, `gbp`, `cad`, `aud`, `nzd`, `chf`, `jpy`, `krw`, `cny`, `inr`, `try`, `zar`, `rub`, `eth`, `btc`

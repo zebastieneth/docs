@@ -1,73 +1,84 @@
 ---
-title: "Welcome to Zerion"
+title: "Introduction"
 description: "A high-performance API for onchain data. Zerion delivers fast, normalized wallet and DeFi data across EVM chains and Solana, powering reliable apps from day one to global scale."
 ---
 
-Zerion is a blockchain data platform for Ethereum, Solana, and major EVM chains, designed to make onchain data easy to consume. Building on years of production experience, Zerion indexes and normalizes raw blockchain activity at scale, transforming it into consistent, reliable data primitives. The Zerion API provides a unified view of wallets, tokens, NFTs, and DeFi positions, enabling developers to build accurate, real-time applications across chains.
+Zerion API is a single, normalized interface for wallet-level blockchain data across 15+ EVM chains and Solana. Instead of raw chain data, you get interpreted financial information — values, types, relationships, and metadata in a ready-to-use, human-readable format.
 
-## What you can build
+Battle-tested in production by consumer applications serving millions of users, the API delivers fresh data within milliseconds of new blocks hitting the chain.
 
-<CardGroup cols={2}>
-  <Card title="Portfolio Tracking" icon="chart-line">
-    Track wallet balances, positions, and historical performance across multiple chains.
+<CardGroup cols={3}>
+  <Card title="Get your API key" icon="key" href="https://developers.zerion.io">
+    Free to start — 300 calls/day
   </Card>
-  <Card title="Transaction History" icon="clock-rotate-left">
-    Fetch detailed transaction history with parsed actions and metadata.
+  <Card title="Authentication" icon="lock" href="/authentication">
+    Set up HTTP Basic Auth
   </Card>
-  <Card title="Token Data" icon="coins">
-    Access fungible token prices, charts, and market data.
-  </Card>
-  <Card title="NFT Data" icon="image">
-    Retrieve NFT positions, collections, and portfolio valuations.
+  <Card title="Supported chains" icon="link" href="/supported-blockchains">
+    15+ EVM chains and Solana
   </Card>
 </CardGroup>
 
-## Key Features
+## What you can do
 
-- **Multi-chain support** — Access data across 15+ EVM chains and Solana
-- **Real-time data** — Get up-to-date portfolio and market information
-- **Parsed transactions** — Human-readable transaction descriptions and categorization
-- **DeFi positions** — Track lending, staking, and liquidity positions
-- **Gas prices** — Current gas prices across supported chains
+<CardGroup cols={2}>
+  <Card title="Portfolio tracking" icon="chart-pie">
+    Get a complete view of any wallet's holdings — fungible tokens, DeFi positions across 8,000+ protocols, and NFTs — with USD valuations, all from a single call.
+  </Card>
+  <Card title="Transaction history" icon="clock-rotate-left">
+    Fetch full transaction history with interpreted financial meaning. Every transaction is parsed into human-readable actions like "Swapped 1 ETH for 2,000 USDC".
+  </Card>
+  <Card title="Profit & Loss" icon="chart-line">
+    Calculate net invested amounts, realized and unrealized gains, and overall PnL for any wallet, with full historical context.
+  </Card>
+  <Card title="Token & NFT data" icon="coins">
+    Access prices, charts, market data for fungible tokens, and floor prices, metadata, and collection info for NFTs — including long-tail assets.
+  </Card>
+  <Card title="Swaps & bridging" icon="arrow-right-arrow-left">
+    Get swap and bridge quotes across chains and execute trades through a unified interface.
+  </Card>
+  <Card title="Real-time webhooks" icon="bell">
+    Subscribe to wallet activity and get instant notifications via webhooks when transactions occur — no polling required.
+  </Card>
+</CardGroup>
+
+## Quick start
+
+Get up and running in under 5 minutes — fetch a portfolio, list positions, read parsed transactions, and set up real-time webhooks.
+
+```bash
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/portfolio"
+```
+
+<Card title="Follow the full Quickstart guide" icon="arrow-right" href="/quickstart">
+  Four hands-on API calls with code in cURL, JavaScript, and Python.
+</Card>
 
 ## Base URL
 
-All API requests should be made to:
+All API requests use a single base URL:
 
 ```
 https://api.zerion.io
 ```
 
-## Getting Started
+## Why Zerion
 
-<Steps>
-  <Step title="Get your API key">
-    Sign up at [dashboard.zerion.io](https://dashboard.zerion.io/) to get your API key.
-  </Step>
-  <Step title="Authenticate your requests">
-    Include your API key using HTTP Basic Auth. See the [Authentication](/authentication) page for details.
-  </Step>
-  <Step title="Make your first request">
-    Try fetching a wallet's portfolio using the `/v1/wallets/{address}/portfolio` endpoint.
-  </Step>
-</Steps>
+| | |
+|---|---|
+| **Millisecond freshness** | Data updates within milliseconds of new blocks — no stale reads. |
+| **Battle-tested reliability** | The same infrastructure powering the Zerion app used by millions. |
+| **Unified schema** | One consistent format across all chains. No node management, no chain-specific parsing. |
+| **Interpreted data** | Not raw logs — you get parsed, categorized, human-readable financial data. |
 
-## Need Help?
+## Need help?
 
 <CardGroup cols={2}>
-  <Card title="AI Assistance" icon="brain-circuit" href="mailto:api@zerion.io">
-    Use the AI assitant to find the answers to your questions.
+  <Card title="Email support" icon="envelope" href="mailto:api@zerion.io">
+    Reach us at api@zerion.io for technical questions.
   </Card>
-  <Card title="Direct Support" icon="headset" href="https://discord.gg/zerion">
-    Get help directly from the Zerion support team.
-  </Card>
-</CardGroup>
-
-<CardGroup cols={2}>
-  <Card title="Telegram" icon="headset" href="mailto:api@zerion.io">
-    Shared Telegram group with the Zerion team on Telegram is available on the Builder plan and higher.
-  </Card>
-  <Card title="Slack" icon="chart-radar" href="https://discord.gg/zerion">
-    Direct collaboration with the Zerion team on Slack is available on the Startup plan and higher.
+  <Card title="Discord community" icon="discord" href="https://discord.gg/zerion">
+    Connect with the Zerion team and other developers.
   </Card>
 </CardGroup>

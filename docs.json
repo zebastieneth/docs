@@ -1,13 +1,17 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "maple",
+  "theme": "mint",
   "name": "Zerion API",
   "colors": {
     "primary": "#2461ED",
     "light": "#4579f4",
-    "dark": "#06003C"
+    "dark": "#2461ED"
   },
-  "favicon": "/images/unnamed(3).png",
+  "favicon": "/images/favicon.png",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
   "api": {
     "playground": {
       "display": "interactive"
@@ -19,39 +23,59 @@
     }
   },
   "navigation": {
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Playground",
-          "href": "https://zerion-devkit.vercel.app/",
-          "icon": "play"
-        },
-        {
-          "anchor": "Support",
-          "href": "mailto:api@zerion.io",
-          "icon": "headset"
-        }
-      ]
-    },
-    "groups": [
+    "tabs": [
       {
-        "group": "Getting Started",
-        "pages": [
-          "introduction",
-          "authentication",
-          "supported-blockchains"
+        "tab": "Docs",
+        "groups": [
+          {
+            "group": "Get Started",
+            "icon": "rocket",
+            "iconStyle": "duotone",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "authentication",
+              "build-with-ai"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "icon": "book",
+            "iconStyle": "duotone",
+            "pages": [
+              "supported-blockchains",
+              "pagination-and-filtering",
+              "error-handling"
+            ]
+          },
+          {
+            "group": "REST API",
+            "icon": "square-terminal",
+            "iconStyle": "duotone",
+            "openapi": "openapi-v1.yaml"
+          },
+          {
+            "group": "Webhooks",
+            "icon": "bell",
+            "iconStyle": "duotone",
+            "pages": [
+              "webhooks"
+            ]
+          }
         ]
       },
       {
-        "group": "REST API",
-        "openapi": "openapi-v1.yaml"
+        "tab": "Changelog",
+        "pages": [
+          "changelog"
+        ]
       }
     ]
   },
   "navbar": {
     "primary": {
       "type": "button",
-      "label": "Start building",
+      "label": "Dashboard",
       "href": "https://developers.zerion.io"
     }
   },
@@ -74,6 +98,5 @@
       "discord": "https://discord.gg/zerion"
     }
   },
-  "description": "Zerion is an Ethereum and Solana wallet and developer platform focused on making blockchain data easy to use.",
-  "logo": "/images/zerion_logo.png"
+  "description": "Zerion is an Ethereum and Solana wallet and developer platform focused on making blockchain data easy to use."
 }
