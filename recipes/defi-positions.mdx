@@ -1,0 +1,163 @@
+---
+title: Fetch DeFi Positions of a Wallet
+description: Retrieve lending, staking, and liquidity positions across DeFi protocols for any wallet.
+---
+
+This recipe shows how to fetch all DeFi protocol positions (staking, lending, liquidity pools, etc.) held by a wallet across all supported chains.
+
+## Prerequisites
+
+- A Zerion API key ([get one here](https://developers.zerion.io))
+- A wallet address to query
+
+## Steps
+
+<Steps>
+
+### Fetch DeFi positions
+
+Call the positions endpoint with `filter[positions]=only_complex` to get only DeFi protocol positions, excluding regular wallet tokens.
+
+<CodeGroup>
+
+```bash cURL
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/positions/?currency=usd&filter[positions]=only_complex&sort=-value"
+```
+
+```javascript JavaScript
+const apiKey = "YOUR_API_KEY";
+const address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
+const encoded = btoa(`${apiKey}:`);
+
+const response = await fetch(
+  `https://api.zerion.io/v1/wallets/${address}/positions/?currency=usd&filter[positions]=only_complex&sort=-value`,
+  { headers: { Authorization: `Basic ${encoded}` } }
+);
+
+const { data } = await response.json();
+
+for (const position of data) {
+  const { name, protocol, protocol_module, quantity, value } = position.attributes;
+  console.log(
+    `${name} | ${protocol} (${protocol_module}) | ${quantity.float} | $${value?.toFixed(2)}`
+  );
+}
+```
+
+```python Python
+import requests
+
+api_key = "YOUR_API_KEY"
+address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+
+response = requests.get(
+    f"https://api.zerion.io/v1/wallets/{address}/positions/",
+    params={
+        "currency": "usd",
+        "filter[positions]": "only_complex",
+        "sort": "-value",
+    },
+    auth=(api_key, ""),
+)
+
+for position in response.json()["data"]:
+    attrs = position["attributes"]
+    print(
+        f"{attrs['name']} | "
+        f"{attrs.get('protocol', 'N/A')} ({attrs.get('protocol_module', 'N/A')}) | "
+        f"{attrs['quantity']['float']} | "
+        f"${attrs.get('value', 0):.2f}"
+    )
+```
+
+</CodeGroup>
+
+Key parameters:
+- `filter[positions]=only_complex` — returns only DeFi protocol positions (staked, deposited, liquidity, etc.)
+- `sort=-value` — highest value positions first
+- `currency=usd` — returns values in USD (also supports `eur`, `gbp`, etc.)
+
+### Filter by position type (optional)
+
+Use `filter[position_types]` to narrow results to specific DeFi categories.
+
+<CodeGroup>
+
+```bash cURL
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/positions/?currency=usd&filter[positions]=only_complex&filter[position_types]=deposit,staked"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  `https://api.zerion.io/v1/wallets/${address}/positions/?currency=usd&filter[positions]=only_complex&filter[position_types]=deposit,staked`,
+  { headers: { Authorization: `Basic ${encoded}` } }
+);
+
+const { data } = await response.json();
+```
+
+```python Python
+response = requests.get(
+    f"https://api.zerion.io/v1/wallets/{address}/positions/",
+    params={
+        "currency": "usd",
+        "filter[positions]": "only_complex",
+        "filter[position_types]": "deposit,staked",
+    },
+    auth=(api_key, ""),
+)
+```
+
+</CodeGroup>
+
+Available position types:
+- `deposit` — assets deposited into lending pools, vaults, or liquidity pools
+- `staked` — assets staked for rewards, governance, or consensus
+- `reward` — unclaimed rewards earned from protocols
+- `locked` — vote-escrowed or time-locked positions
+- `wallet` — regular wallet assets (excluded by `only_complex`)
+
+### Filter by chain (optional)
+
+To get DeFi positions on specific chains only, add `filter[chain_ids]`.
+
+```bash
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/positions/?currency=usd&filter[positions]=only_complex&filter[chain_ids]=ethereum,arbitrum"
+```
+
+</Steps>
+
+## Example output
+
+```
+Position                  | Protocol     | Module         | Amount    | Value
+Supplied USDC             | Aave V3      | lending        | 5,000.00  | $5,000.00
+Staked ETH                | Lido         | staked         | 1.20      | $2,543.88
+ETH/USDC LP              | Uniswap V3   | liquidity_pool | 0.85      | $1,801.15
+Locked CRV                | Curve        | locked         | 10,000.00 | $450.00
+Unclaimed ARB             | Arbitrum     | rewards        | 200.00    | $230.00
+```
+
+## Response fields reference
+
+Each DeFi position includes:
+
+| Field | Description |
+|---|---|
+| `name` | Human-readable position name |
+| `protocol` | Protocol name (e.g., "Aave V3", "Lido") |
+| `protocol_module` | Type of DeFi interaction (`lending`, `staked`, `liquidity_pool`, etc.) |
+| `position_type` | Position category (`deposit`, `staked`, `reward`, `locked`) |
+| `quantity.float` | Token amount |
+| `value` | USD value of the position |
+| `group_id` | ID to group related positions (e.g., both sides of an LP) |
+| `relationships.chain` | Which blockchain the position is on |
+
+## Next steps
+
+- Use `filter[positions]=no_filter` to get both DeFi and wallet positions in a single call
+- Combine with the [portfolio endpoint](/api-reference/wallets/get-wallets-portfolio) to see total value distribution by type
+- Implement [pagination](/pagination-and-filtering) to handle wallets with many DeFi positions

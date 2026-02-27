@@ -7,13 +7,13 @@ mode: "wide"
 
 <CardGroup cols={3}>
   <Card title="Get your API key" icon="key" href="https://dashboard.zerion.io">
-    Log into the dashboard and generate a free key. 300 calls/day to start.
+    Log into the dashboard and generate a free key.
   </Card>
   <Card title="API Reference" icon="code" href="/api-reference/wallets/get-wallets-portfolio">
     Explore all API endpoints.
   </Card>
-  <Card title="Build with AI" icon="robot" href="/build-with-ai">
-    Use MCP, x402, or Zerion Skill to integrate AI agents with onchain data.
+  <Card title="Build with AI" icon="brain-circuit" href="/build-with-ai/overview">
+    Connect AI agents to onchain data via MCP, x402, and more.
   </Card>
 </CardGroup>
 
@@ -26,54 +26,66 @@ mode: "wide"
         <p style={{margin: 0}}>Fetch a wallet's total portfolio value and break it down by individual token positions across all supported chains.</p>
         <a href="/recipes/multi-chain-portfolio" class="hero-cta" style={{marginTop: "1.5rem", display: "inline-flex"}}>View recipe →</a>
       </div>
-      <img src="/images/portfolio-mobile.png" alt="Zerion wallet portfolio view" style={{maxWidth: "250px", borderRadius: "12px", margin: "0 auto"}} noZoom />
+      <img src="/images/portfolio.png" alt="Zerion wallet portfolio view" style={{maxWidth: "400px", borderRadius: "12px", margin: "0 auto"}} noZoom />
     </div>
   </Tab>
 
   <Tab title="DeFi Positions">
     <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", alignItems: "start"}}>
       <div>
-        <p style={{margin: 0}}>Fetch lending, staking, and liquidity positions across protocols like Aave, Uniswap, and Lido — all normalized into a single schema.</p>
-        <a href="/api-reference" class="hero-cta" style={{marginTop: "1.5rem", display: "inline-flex"}}>View API reference →</a>
+        <p style={{margin: 0}}>Fetch active DeFi positions across protocols — lending, staking, and liquidity, all in a single schema.</p>
+        <a href="/recipes/defi-positions" class="hero-cta" style={{marginTop: "1.5rem", display: "inline-flex"}}>View recipe →</a>
       </div>
-      <img src="/images/portfolio-mobile.png" alt="Zerion DeFi positions view" style={{maxWidth: "250px", borderRadius: "12px", margin: "0 auto"}} noZoom />
+      <img src="/images/defi-positions.png" alt="Zerion DeFi positions view" style={{maxWidth: "400px", borderRadius: "12px", margin: "0 auto"}} noZoom />
     </div>
   </Tab>
 
   <Tab title="Transaction History">
     <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", alignItems: "start"}}>
       <div>
-        <p style={{margin: 0}}>Full transaction history interpreted into human-readable actions like "Swapped 1 ETH for 2,000 USDC". Filter by type, chain, and date range.</p>
+        <p style={{margin: 0}}>Every transaction decoded into human-readable actions — swaps, transfers, approvals, and more. Filter by type, chain, or date range.</p>
         <a href="/recipes/transaction-history" class="hero-cta" style={{marginTop: "1.5rem", display: "inline-flex"}}>View recipe →</a>
       </div>
-      <img src="/images/portfolio-mobile.png" alt="Zerion transaction history view" style={{maxWidth: "250px", borderRadius: "12px", margin: "0 auto"}} noZoom />
+      <img src="/images/transaction-history.png" alt="Zerion transaction history view" style={{maxWidth: "400px", borderRadius: "12px", margin: "0 auto"}} noZoom />
     </div>
   </Tab>
 
-  <Tab title="Tax Tools">
+  <Tab title="PnL">
     <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", alignItems: "start"}}>
       <div>
-        <p style={{margin: 0}}>Pull unified positions and transactions, normalize to USD or any other currency. Get PnL for any address or token.</p>
+        <p style={{margin: 0}}>Track PnL at the wallet level and drill down into performance per token. Normalized to USD or any currency.</p>
         <a href="/recipes/wallet-pnl-tracker" class="hero-cta" style={{marginTop: "1.5rem", display: "inline-flex"}}>View recipe →</a>
       </div>
-      <img src="/images/portfolio-mobile.png" alt="Zerion tax tools view" style={{maxWidth: "250px", borderRadius: "12px", margin: "0 auto"}} noZoom />
+      <img src="/images/transaction-history.png" alt="Zerion PnL view" style={{maxWidth: "400px", borderRadius: "12px", margin: "0 auto"}} noZoom />
     </div>
   </Tab>
 
-  <Tab title="Real-time Alerts">
+  <Tab title="NFTs">
+    <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", alignItems: "start"}}>
+      <div>
+        <p style={{margin: 0}}>Fetch NFT collections and individual tokens held by any wallet. Includes metadata, floor prices, and media across all supported chains.</p>
+        <a href="/api-reference/wallets/get-wallets-nft-positions" class="hero-cta" style={{marginTop: "1.5rem", display: "inline-flex"}}>View API reference →</a>
+      </div>
+      <img src="/images/transaction-history.png" alt="Zerion NFT positions view" style={{maxWidth: "400px", borderRadius: "12px", margin: "0 auto"}} noZoom />
+    </div>
+  </Tab>
+
+  <Tab title="Notifications">
     <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", alignItems: "start"}}>
       <div>
         <p style={{margin: 0}}>Subscribe to wallet activity via webhooks and get instant notifications when transactions happen — no polling needed.</p>
         <a href="/recipes/wallet-activity-alerts" class="hero-cta" style={{marginTop: "1.5rem", display: "inline-flex"}}>View recipe →</a>
       </div>
-      <img src="/images/portfolio-mobile.png" alt="Zerion real-time alerts view" style={{maxWidth: "250px", borderRadius: "12px", margin: "0 auto"}} noZoom />
+      <img src="/images/transaction-history.png" alt="Zerion real-time alerts view" style={{maxWidth: "400px", borderRadius: "12px", margin: "0 auto"}} noZoom />
     </div>
   </Tab>
 </Tabs>
 
-## Built for scale
+## Why Zerion API
 
 Zerion API provides endpoints for wallet data, token analytics, DeFi positions, and real-time webhooks across [EVM chains and Solana](/supported-blockchains). These endpoints abstract away multi-chain complexity and deliver clean, normalized data ready to power your application.
+
+<br />
 
 <div style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "32px"}}>
   <div>
@@ -103,7 +115,7 @@ Zerion API provides endpoints for wallet data, token analytics, DeFi positions, 
 
 <CardGroup cols={2}>
   <Card title="Quickstart" icon="bolt" href="/quickstart">
-    Make your first API call in under 5 minutes.
+    Make your first request in under 5 minutes.
   </Card>
   <Card title="Supported Blockchains" icon="link" href="/supported-blockchains">
     See every chain the API covers.
@@ -111,7 +123,7 @@ Zerion API provides endpoints for wallet data, token analytics, DeFi positions, 
   <Card title="Recipes" icon="book" href="/recipes">
     Step-by-step guides for common use cases.
   </Card>
-  <Card title="Changelog" icon="clock" href="/changelog">
+  <Card title="Changelogs" icon="clock" href="/changelog">
     Latest updates and new features.
   </Card>
 </CardGroup>

@@ -1,0 +1,73 @@
+---
+title: "Rate Limits"
+description: "Understand rate limits, monitor your usage, and handle throttled requests."
+---
+
+Rate limits depend on your plan. Visit the [Dashboard](https://dashboard.zerion.io) for your current limits and upgrade options.
+
+## Monitoring usage
+
+Check the `X-RateLimit-*` headers in every API response to track your consumption in real time.
+
+## When you hit the limit
+
+The API returns a `429 Too Many Requests` response:
+
+```json
+{
+  "errors": [
+    {
+      "title": "Too many requests",
+      "detail": "Your request had been throttled"
+    }
+  ]
+}
+```
+
+## Handling rate limits
+
+Use exponential backoff to retry after a `429` response:
+
+<CodeGroup>
+
+```javascript JavaScript
+async function fetchWithRetry(url, apiKey, maxRetries = 3) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const response = await fetch(url, {
+      headers: { Authorization: `Basic ${btoa(`${apiKey}:`)}` }
+    });
+
+    if (response.status !== 429) return response;
+
+    const delay = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+
+  throw new Error("Rate limit exceeded after retries");
+}
+```
+
+```python Python
+import requests
+import time
+
+def fetch_with_retry(url, api_key, max_retries=3):
+    for attempt in range(max_retries + 1):
+        response = requests.get(url, auth=(api_key, ""))
+
+        if response.status_code != 429:
+            return response
+
+        delay = 2 ** attempt  # 1s, 2s, 4s
+        time.sleep(delay)
+
+    raise Exception("Rate limit exceeded after retries")
+```
+
+</CodeGroup>
+
+## Tips to stay under the limit
+
+- **Use webhooks instead of polling** — [transaction subscriptions](/api-reference/tx-subscriptions/create-subscription-wallet-transactions) give you real-time updates without repeated requests
+- **Cache responses** where data doesn't change frequently (e.g., chain lists, token metadata)
+- **Use filters and pagination** to fetch only the data you need — smaller requests, fewer calls

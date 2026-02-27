@@ -34,7 +34,7 @@
     },
     "tabs": [
       {
-        "tab": "Docs",
+        "tab": "Home",
         "groups": [
           {
             "group": "Get Started",
@@ -45,6 +45,7 @@
               {
                 "group": "Build with AI",
                 "pages": [
+                  "build-with-ai/overview",
                   "build-with-ai/mcp",
                   "build-with-ai/x402",
                   "build-with-ai/zerion-skill"
@@ -59,6 +60,7 @@
               "endpoints-and-schema",
               "pagination-and-filtering",
               "error-handling",
+              "rate-limits",
               "spam-filtering"
             ]
           }
@@ -78,6 +80,7 @@
         "pages": [
           "recipes",
           "recipes/multi-chain-portfolio",
+          "recipes/defi-positions",
           "recipes/wallet-token-balances",
           "recipes/transaction-history",
           "recipes/wallet-activity-alerts",
@@ -85,7 +88,7 @@
         ]
       },
       {
-        "tab": "Changelog",
+        "tab": "Changelogs",
         "pages": [
           "changelog"
         ]

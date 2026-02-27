@@ -107,52 +107,6 @@ Returned when you exceed your plan's rate limit.
 }
 ```
 
-## Rate limits
-
-Rate limits and available features depend on your plan. Visit the [dashboard](https://dashboard.zerion.io) for details on your current limits and upgrade options.
-
-### Handling rate limits
-
-When you receive a `429` response, back off and retry after a delay:
-
-<CodeGroup>
-
-```javascript JavaScript
-async function fetchWithRetry(url, apiKey, maxRetries = 3) {
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    const response = await fetch(url, {
-      headers: { Authorization: `Basic ${btoa(`${apiKey}:`)}` }
-    });
-
-    if (response.status !== 429) return response;
-
-    const delay = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s
-    await new Promise(resolve => setTimeout(resolve, delay));
-  }
-
-  throw new Error("Rate limit exceeded after retries");
-}
-```
-
-```python Python
-import requests
-import time
-
-def fetch_with_retry(url, api_key, max_retries=3):
-    for attempt in range(max_retries + 1):
-        response = requests.get(url, auth=(api_key, ""))
-
-        if response.status_code != 429:
-            return response
-
-        delay = 2 ** attempt  # 1s, 2s, 4s
-        time.sleep(delay)
-
-    raise Exception("Rate limit exceeded after retries")
-```
-
-</CodeGroup>
-
 ## Best practices
 
 <AccordionGroup>
@@ -166,6 +120,6 @@ def fetch_with_retry(url, api_key, max_retries=3):
     Check that `page[size]` is between 1–100, timestamps are 13-digit milliseconds, and chain IDs match the [supported chains](/supported-blockchains). This avoids unnecessary `400` errors.
   </Accordion>
   <Accordion title="Use webhooks instead of polling">
-    If you need to monitor wallet activity, use [transaction subscriptions](/quickstart#4-subscribe-to-real-time-webhooks) instead of polling the transactions endpoint. This reduces your API usage and gives you faster notifications.
+    If you need to monitor wallet activity, use [transaction subscriptions](/api-reference/tx-subscriptions/create-subscription-wallet-transactions) instead of polling the transactions endpoint. This reduces your API usage and gives you faster notifications.
   </Accordion>
 </AccordionGroup>
