@@ -1,0 +1,80 @@
+---
+title: "MCP"
+description: "Connect your AI tools to the Zerion API docs via Model Context Protocol."
+---
+
+The Zerion API docs are available as a Model Context Protocol (MCP) server. Once connected, your AI tool can search our full documentation and OpenAPI spec while generating code — no copy-pasting needed.
+
+## Connect via MCP
+
+<Tabs>
+  <Tab title="Claude Code">
+    Run this in your terminal:
+
+    ```bash
+    claude mcp add --transport http zerion-api https://docs.zerion.io/mcp
+    ```
+
+    The Zerion docs will be available as a tool in all Claude Code sessions.
+  </Tab>
+  <Tab title="Cursor">
+    Open the command palette (`Cmd+Shift+P`) → "MCP: Edit Config", then add:
+
+    ```json
+    {
+      "mcpServers": {
+        "zerion-api": {
+          "url": "https://docs.zerion.io/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="VS Code">
+    Create `.vscode/mcp.json` in your project:
+
+    ```json
+    {
+      "servers": {
+        "zerion-api": {
+          "type": "http",
+          "url": "https://docs.zerion.io/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Claude Web">
+    1. Go to Claude settings → **Connectors**
+    2. Select **Add custom connector**
+    3. Name: `Zerion API`, URL: `https://docs.zerion.io/mcp`
+    4. Use the attachments button (+) in any chat to access it
+  </Tab>
+</Tabs>
+
+## What you can ask
+
+Once connected, you can ask your AI assistant things like:
+
+- *"How do I get a wallet's token positions on Ethereum?"*
+- *"Write a Python script that fetches transaction history and filters for trades"*
+- *"What filters are available on the positions endpoint?"*
+
+The AI will search the Zerion docs in real-time to give you accurate, up-to-date answers.
+
+## Open in AI assistants
+
+You can also open any documentation page directly in an AI chat for quick questions:
+
+<CardGroup cols={2}>
+  <Card title="Claude" icon="message" href="https://claude.ai">
+    Paste any docs page URL into Claude for API questions and code generation.
+  </Card>
+  <Card title="ChatGPT" icon="message" href="https://chat.openai.com">
+    Use ChatGPT to explore endpoints and generate integration code.
+  </Card>
+</CardGroup>
+
+<Tip>
+For the best experience, use the MCP integration instead of copy-pasting. It gives the AI access to the full docs and API spec, not just one page at a time.
+</Tip>

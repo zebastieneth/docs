@@ -1,0 +1,151 @@
+---
+title: Build a Multi-Chain Portfolio Tracker
+description: Combine wallet portfolio and positions endpoints to display total value across chains.
+---
+
+This recipe shows how to fetch a wallet's total portfolio value and then break it down by individual token positions across all supported chains.
+
+## Prerequisites
+
+- A Zerion API key ([get one here](https://developers.zerion.io))
+- A wallet address to query
+
+## Steps
+
+<Steps>
+
+### Get the portfolio overview
+
+Start by fetching the wallet's portfolio summary to get the total value and per-chain breakdown.
+
+<CodeGroup>
+
+```bash cURL
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/portfolio?currency=usd"
+```
+
+```javascript JavaScript
+const apiKey = "YOUR_API_KEY";
+const address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
+const encoded = btoa(`${apiKey}:`);
+
+const response = await fetch(
+  `https://api.zerion.io/v1/wallets/${address}/portfolio?currency=usd`,
+  { headers: { Authorization: `Basic ${encoded}` } }
+);
+
+const { data } = await response.json();
+console.log("Total portfolio value:", data.attributes.total.positions);
+console.log("By chain:", data.attributes.positions_distribution_by_chain);
+```
+
+```python Python
+import requests
+
+api_key = "YOUR_API_KEY"
+address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+
+response = requests.get(
+    f"https://api.zerion.io/v1/wallets/{address}/portfolio",
+    params={"currency": "usd"},
+    auth=(api_key, ""),
+)
+
+data = response.json()["data"]
+print("Total portfolio value:", data["attributes"]["total"]["positions"])
+print("By chain:", data["attributes"]["positions_distribution_by_chain"])
+```
+
+</CodeGroup>
+
+The response includes:
+- `total.positions` — the total USD value of all positions
+- `positions_distribution_by_chain` — a breakdown of value by chain (e.g., `ethereum: 1214.00`, `optimism: 573.03`)
+- `positions_distribution_by_type` — value split by position type (wallet, staked, deposited, etc.)
+- `changes.percent_1d` — 24h portfolio change percentage
+
+### Fetch individual positions
+
+Now get the detailed list of tokens to display each holding.
+
+<CodeGroup>
+
+```bash cURL
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/positions/?currency=usd&sort=-value"
+```
+
+```javascript JavaScript
+const positionsRes = await fetch(
+  `https://api.zerion.io/v1/wallets/${address}/positions/?currency=usd&sort=-value`,
+  { headers: { Authorization: `Basic ${encoded}` } }
+);
+
+const positions = await positionsRes.json();
+
+for (const position of positions.data) {
+  const { fungible_info, value, quantity } = position.attributes;
+  const chain = position.relationships.chain.data.id;
+  console.log(
+    `${fungible_info.symbol} on ${chain}: ${quantity.float} ($${value?.toFixed(2)})`
+  );
+}
+```
+
+```python Python
+positions_response = requests.get(
+    f"https://api.zerion.io/v1/wallets/{address}/positions/",
+    params={"currency": "usd", "sort": "-value"},
+    auth=(api_key, ""),
+)
+
+for position in positions_response.json()["data"]:
+    info = position["attributes"]["fungible_info"]
+    value = position["attributes"]["value"]
+    quantity = position["attributes"]["quantity"]["float"]
+    chain = position["relationships"]["chain"]["data"]["id"]
+    print(f"{info['symbol']} on {chain}: {quantity} (${value:.2f})")
+```
+
+</CodeGroup>
+
+Using `sort=-value` orders positions by USD value (highest first). Each position includes:
+- `fungible_info.symbol` and `fungible_info.name` — token identity
+- `quantity.float` — the token amount
+- `value` — USD value of the position
+- `relationships.chain` — which chain the position is on
+
+### Filter by specific chains (optional)
+
+To show positions for specific chains only, use the `filter[chain_ids]` parameter.
+
+```bash
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/positions/?currency=usd&filter[chain_ids]=ethereum,optimism,base"
+```
+
+</Steps>
+
+## Example output
+
+```
+Total portfolio: $2,017.49
+24h change: +5.33%
+
+Chain breakdown:
+  ethereum:  $1,214.01
+  optimism:  $573.03
+  arbitrum:  $458.36
+
+Top positions:
+  ETH on ethereum: 0.52 ($1,102.45)
+  OP on optimism: 421.3 ($573.03)
+  USDC on arbitrum: 458.35 ($458.36)
+```
+
+## Next steps
+
+- Add the [balance chart endpoint](/api-reference/wallets/get-wallets-balance-chart) to visualize portfolio performance over time
+- Use `filter[positions]=no_filter` to include DeFi protocol positions (staked, deposited, etc.)
+- Implement [pagination](/pagination-and-filtering) to handle wallets with many positions

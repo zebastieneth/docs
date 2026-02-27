@@ -1,0 +1,195 @@
+---
+title: Parse a Wallet's Transaction History
+description: Fetch and interpret a wallet's transactions with human-readable types and transfer details.
+---
+
+This recipe shows how to fetch a wallet's transactions and interpret the different operation types, transfers, and fees to build a human-readable activity feed.
+
+## Prerequisites
+
+- A Zerion API key ([get one here](https://developers.zerion.io))
+- A wallet address to query
+
+## Steps
+
+<Steps>
+
+### Fetch recent transactions
+
+<CodeGroup>
+
+```bash cURL
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/transactions/?currency=usd&page[size]=10"
+```
+
+```javascript JavaScript
+const apiKey = "YOUR_API_KEY";
+const address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
+const encoded = btoa(`${apiKey}:`);
+
+const response = await fetch(
+  `https://api.zerion.io/v1/wallets/${address}/transactions/?currency=usd&page[size]=10`,
+  { headers: { Authorization: `Basic ${encoded}` } }
+);
+
+const { data } = await response.json();
+
+for (const tx of data) {
+  const { operation_type, mined_at, transfers, fee, application_metadata } =
+    tx.attributes;
+  const chain = tx.relationships.chain.data.id;
+
+  console.log(`[${mined_at}] ${operation_type} on ${chain}`);
+  if (application_metadata?.name) {
+    console.log(`  via ${application_metadata.name}`);
+  }
+  for (const transfer of transfers) {
+    const symbol = transfer.fungible_info?.symbol || "NFT";
+    console.log(
+      `  ${transfer.direction === "out" ? "-" : "+"}${transfer.quantity.float} ${symbol} ($${transfer.value?.toFixed(2)})`
+    );
+  }
+  console.log(`  Fee: $${fee.value?.toFixed(2)}`);
+}
+```
+
+```python Python
+import requests
+
+api_key = "YOUR_API_KEY"
+address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+
+response = requests.get(
+    f"https://api.zerion.io/v1/wallets/{address}/transactions/",
+    params={"currency": "usd", "page[size]": 10},
+    auth=(api_key, ""),
+)
+
+for tx in response.json()["data"]:
+    attrs = tx["attributes"]
+    chain = tx["relationships"]["chain"]["data"]["id"]
+    app = attrs.get("application_metadata", {})
+
+    print(f"[{attrs['mined_at']}] {attrs['operation_type']} on {chain}")
+    if app.get("name"):
+        print(f"  via {app['name']}")
+    for transfer in attrs["transfers"]:
+        symbol = transfer.get("fungible_info", {}).get("symbol", "NFT")
+        direction = "-" if transfer["direction"] == "out" else "+"
+        print(f"  {direction}{transfer['quantity']['float']} {symbol} (${transfer.get('value', 0):.2f})")
+    print(f"  Fee: ${attrs['fee'].get('value', 0):.2f}")
+```
+
+</CodeGroup>
+
+Each transaction includes:
+- `operation_type` — the high-level action (trade, send, receive, deposit, etc.)
+- `transfers[]` — individual token movements with direction (`in`/`out`/`self`)
+- `fee` — gas fee paid, with USD value
+- `application_metadata` — the DApp involved (e.g., "Uniswap", "Aave")
+
+### Filter by operation type
+
+To show only specific transaction types, use `filter[operation_types]`.
+
+```bash
+# Show only trades (swaps)
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/transactions/?currency=usd&filter[operation_types]=trade"
+```
+
+Available operation types:
+
+| Type | Description |
+|---|---|
+| `send` | Sent tokens to another address |
+| `receive` | Received tokens from another address |
+| `trade` | Swapped tokens (e.g., on a DEX) |
+| `deposit` | Deposited into a DeFi protocol |
+| `withdraw` | Withdrew from a DeFi protocol |
+| `mint` | Minted new tokens |
+| `burn` | Burned tokens |
+| `approve` | Approved token spending |
+| `claim` | Claimed rewards or airdrops |
+| `execute` | Generic smart contract interaction |
+| `deploy` | Deployed a smart contract |
+
+### Filter by chain and date range
+
+Narrow results to specific chains or time windows.
+
+```bash
+# Ethereum transactions from the last 30 days
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/transactions/?currency=usd&filter[chain_ids]=ethereum&filter[min_mined_at]=1708905600000"
+```
+
+### Paginate through full history
+
+Use `links.next` from each response to fetch the next page.
+
+<CodeGroup>
+
+```javascript JavaScript
+async function getFullHistory(address) {
+  const allTxs = [];
+  let url = `https://api.zerion.io/v1/wallets/${address}/transactions/?currency=usd&page[size]=100`;
+
+  while (url) {
+    const response = await fetch(url, {
+      headers: { Authorization: `Basic ${encoded}` },
+    });
+    const result = await response.json();
+    allTxs.push(...result.data);
+    url = result.links.next || null;
+  }
+
+  return allTxs;
+}
+```
+
+```python Python
+def get_full_history(address):
+    all_txs = []
+    url = f"https://api.zerion.io/v1/wallets/{address}/transactions/"
+    params = {"currency": "usd", "page[size]": 100}
+
+    while url:
+        response = requests.get(url, params=params, auth=(api_key, ""))
+        result = response.json()
+        all_txs.extend(result["data"])
+        url = result["links"].get("next")
+        params = {}  # params are included in the next URL
+
+    return all_txs
+```
+
+</CodeGroup>
+
+</Steps>
+
+## Example output
+
+```
+[2024-03-15T14:22:31+00:00] trade on ethereum
+  via Uniswap
+  -0.5 ETH ($1,060.00)
+  +1200.0 USDC ($1,200.00)
+  Fee: $12.45
+
+[2024-03-14T09:10:05+00:00] receive on optimism
+  +500.0 OP ($680.00)
+  Fee: $0.02
+
+[2024-03-13T18:45:12+00:00] deposit on ethereum
+  via Aave
+  -1000.0 USDC ($1,000.00)
+  Fee: $8.33
+```
+
+## Next steps
+
+- Use `filter[asset_types]=nft` to show NFT transfers
+- Combine with the [DApps endpoint](/api-reference/dapps/get-list-of-dapps) to enrich `application_metadata`
+- Build real-time alerts using the [webhook recipe](/recipes/wallet-activity-alerts) instead of polling

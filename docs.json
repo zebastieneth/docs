@@ -4,7 +4,7 @@
   "name": "Zerion API",
   "colors": {
     "primary": "#2461ED",
-    "light": "#4579f4",
+    "light": "#2461ED",
     "dark": "#2461ED"
   },
   "favicon": "/images/favicon.png",
@@ -23,25 +23,37 @@
     }
   },
   "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Dashboard",
+          "href": "https://dashboard.zerion.io",
+          "icon": "square-terminal"
+        }
+      ]
+    },
     "tabs": [
       {
         "tab": "Docs",
         "groups": [
           {
             "group": "Get Started",
-            "icon": "rocket",
-            "iconStyle": "duotone",
             "pages": [
               "introduction",
               "quickstart",
               "authentication",
-              "build-with-ai"
+              {
+                "group": "Build with AI",
+                "pages": [
+                  "build-with-ai/mcp",
+                  "build-with-ai/x402",
+                  "build-with-ai/zerion-skill"
+                ]
+              }
             ]
           },
           {
             "group": "Core Concepts",
-            "icon": "book",
-            "iconStyle": "duotone",
             "pages": [
               "supported-blockchains",
               "endpoints-and-schema",
@@ -49,13 +61,27 @@
               "error-handling",
               "spam-filtering"
             ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
           {
             "group": "REST API",
-            "icon": "square-terminal",
-            "iconStyle": "duotone",
             "openapi": "openapi-v1.yaml"
           }
+        ]
+      },
+      {
+        "tab": "Recipes",
+        "pages": [
+          "recipes",
+          "recipes/multi-chain-portfolio",
+          "recipes/wallet-token-balances",
+          "recipes/transaction-history",
+          "recipes/wallet-activity-alerts",
+          "recipes/wallet-pnl-tracker"
         ]
       },
       {
@@ -67,17 +93,19 @@
     ]
   },
   "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "https://dashboard.zerion.io"
+      }
+    ],
     "primary": {
       "type": "button",
       "label": "Dashboard",
       "href": "https://dashboard.zerion.io"
     }
   },
-  "integrations": {
-    "intercom": {
-      "appId": "odzbbilr"
-    }
-  },
+  "integrations": {},
   "contextual": {
     "options": []
   },

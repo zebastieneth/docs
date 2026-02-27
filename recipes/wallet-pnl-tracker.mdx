@@ -1,0 +1,226 @@
+---
+title: Build a Wallet PnL Tracker
+description: Track realized gains, unrealized gains, cost basis, and per-token performance for any wallet using the Zerion API.
+---
+
+Track realized gains, unrealized gains, cost basis, and per-token performance for any wallet using the Zerion API.
+
+**What you'll learn:**
+- Fetch a wallet's total PnL (realized, unrealized, fees)
+- Batch-query PnL for up to 100 tokens in one call
+- Compare token performance across chains
+- Handle edge cases (excluded tokens, airdrops, base assets)
+
+## Prerequisites
+
+- A Zerion API key ([get one here](https://developers.zerion.io))
+- Node.js 18+ (for native `fetch`) or any HTTP client
+
+All requests use Basic Auth — your API key is the username, password is empty:
+
+<CodeGroup>
+
+```javascript JavaScript
+const headers = {
+  accept: "application/json",
+  authorization: `Basic ${Buffer.from("YOUR_API_KEY:").toString("base64")}`,
+};
+```
+
+```bash cURL
+curl -u YOUR_API_KEY: \
+  -H "accept: application/json" \
+  "https://api.zerion.io/v1/wallets/{address}/pnl/?currency=usd"
+```
+
+</CodeGroup>
+
+## How PnL is calculated
+
+Zerion uses **FIFO** (First In, First Out) — earliest purchases are matched against earliest sales.
+
+| Field | Description |
+|---|---|
+| `total_gain` | Realized + unrealized combined |
+| `realized_gain` | Profit/loss from sold tokens |
+| `unrealized_gain` | Paper gains on current holdings |
+| `total_invested` | Sum of all buys |
+| `net_invested` | Buys minus sale proceeds |
+| `realized_cost_basis` | Cost basis of closed positions |
+| `total_fee` | Cumulative transaction fees |
+
+When you add token filters, the response includes a `breakdown` object with per-token stats (avg buy/sell price, gain percentages, etc).
+
+## Steps
+
+<Steps>
+
+### Portfolio-level PnL
+
+Fetch overall PnL for a wallet across all tokens and chains.
+
+```javascript
+async function getPortfolioPnL(address, currency = "usd") {
+  const response = await fetch(
+    `https://api.zerion.io/v1/wallets/${address}/pnl/?currency=${currency}`,
+    { headers }
+  );
+  const { data } = await response.json();
+  return data.attributes;
+}
+
+const pnl = await getPortfolioPnL("0x42b9df65b219b3dd36ff330a4dd8f327a6ada990");
+console.log(`Total Gain:   $${pnl.total_gain.toFixed(2)}`);
+console.log(`  Realized:   $${pnl.realized_gain.toFixed(2)}`);
+console.log(`  Unrealized: $${pnl.unrealized_gain.toFixed(2)}`);
+console.log(`Net Invested: $${pnl.net_invested.toFixed(2)}`);
+```
+
+### Batch PnL for specific tokens
+
+Pass up to **100 tokens** in a single request to get a per-token breakdown. Two filtering modes:
+
+| Filter | Use case | Format | Breakdown key |
+|---|---|---|---|
+| `fungible_ids` | Cross-chain aggregate | Token ID (`eth`, `usdc`) | `breakdown.by_id` |
+| `fungible_implementations` | Chain-specific | `chain:address` pair | `breakdown.by_implementation` |
+
+**Option A: `fungible_ids` (cross-chain)**
+
+Aggregates PnL for a token across all chains. Best for portfolio-level token views.
+
+```javascript
+const params = new URLSearchParams({
+  currency: "usd",
+  "filter[fungible_ids]": "eth,usdc,uni,wbtc",
+});
+
+const response = await fetch(
+  `https://api.zerion.io/v1/wallets/${address}/pnl/?${params}`,
+  { headers }
+);
+const { data } = await response.json();
+const breakdown = data.attributes.breakdown?.by_id;
+
+for (const [tokenId, stats] of Object.entries(breakdown)) {
+  console.log(`${tokenId}: $${stats.total_gain?.toFixed(2)} gain (${stats.relative_total_gain_percentage?.toFixed(1)}%)`);
+}
+```
+
+<Note>
+When you filter by token, the top-level fields (`total_gain`, etc.) reflect **only** the filtered tokens, not your entire wallet.
+</Note>
+
+**Option B: `fungible_implementations` (chain-specific)**
+
+Tracks PnL per chain deployment. Best for comparing the same token across L1s and L2s.
+
+```javascript
+const params = new URLSearchParams({
+  currency: "usd",
+  "filter[fungible_implementations]": [
+    "ethereum:",                                             // ETH on mainnet
+    "base:",                                                 // ETH on Base
+    "ethereum:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",  // USDC on Ethereum
+    "base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",      // USDC on Base
+  ].join(","),
+});
+```
+
+Native chain tokens use `chain:` with an empty address — e.g., `ethereum:`, `base:`, `polygon:`.
+
+**Per-token breakdown fields:**
+
+| Field | Description |
+|---|---|
+| `average_buy_price` | Weighted average purchase price |
+| `average_sell_price` | Weighted average sale price |
+| `realized_gain` / `unrealized_gain` | Closed and open position gains |
+| `relative_total_gain_percentage` | Total gain as % of invested |
+| `total_invested` / `net_invested` | Buy total and buys minus sells |
+| `total_fee` | Fees for this token's txns |
+
+### Filter by chain
+
+Scope PnL to specific chains. Works independently or combined with token filters.
+
+```bash
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0x42b9df65b219b3dd36ff330a4dd8f327a6ada990/pnl/?currency=usd&filter[chain_ids]=ethereum,base"
+```
+
+Useful when your app is chain-specific (e.g., a Base-only wallet).
+
+### Full working example
+
+Save as `pnl-dashboard.mjs` and run with `node pnl-dashboard.mjs`:
+
+```javascript
+const API_KEY = "YOUR_ZERION_API_KEY";
+const BASE_URL = "https://api.zerion.io/v1";
+const headers = {
+  accept: "application/json",
+  authorization: `Basic ${Buffer.from(API_KEY + ":").toString("base64")}`,
+};
+
+async function fetchPnL(address, params = {}) {
+  const query = new URLSearchParams({ currency: "usd", ...params });
+  const res = await fetch(`${BASE_URL}/wallets/${address}/pnl/?${query}`, { headers });
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+async function buildDashboard(address, tokenIds) {
+  // 1. Portfolio-level PnL
+  const overall = await fetchPnL(address);
+  const pnl = overall.data.attributes;
+
+  console.log("=== PORTFOLIO SUMMARY ===");
+  console.log(`Total Gain:   $${pnl.total_gain.toFixed(2)} (${pnl.relative_total_gain_percentage.toFixed(1)}%)`);
+  console.log(`  Realized:   $${pnl.realized_gain.toFixed(2)}`);
+  console.log(`  Unrealized: $${pnl.unrealized_gain.toFixed(2)}`);
+  console.log(`Invested:     $${pnl.total_invested.toFixed(2)}`);
+  console.log(`Fees:         $${pnl.total_fee.toFixed(2)}`);
+
+  // 2. Per-token breakdown
+  if (tokenIds?.length) {
+    const batch = await fetchPnL(address, {
+      "filter[fungible_ids]": tokenIds.join(","),
+    });
+    const breakdown = batch.data.attributes.breakdown?.by_id || {};
+    const excluded = batch.meta?.excluded_fungible_ids || [];
+
+    console.log("\n=== TOKEN BREAKDOWN ===");
+    for (const [id, s] of Object.entries(breakdown)) {
+      console.log(`${id.toUpperCase()}`);
+      console.log(`  Buy avg: $${s.average_buy_price?.toFixed(2)}  ->  Sell avg: $${s.average_sell_price?.toFixed(2)}`);
+      console.log(`  Gain: $${s.total_gain?.toFixed(2)} (${s.relative_total_gain_percentage?.toFixed(1)}%)`);
+      console.log(`  Invested: $${s.total_invested?.toFixed(2)}  |  Fees: $${s.total_fee?.toFixed(2)}`);
+    }
+
+    if (excluded.length) {
+      console.log(`\nExcluded (no price data): ${excluded.join(", ")}`);
+    }
+  }
+}
+
+buildDashboard("0x42b9df65b219b3dd36ff330a4dd8f327a6ada990", [
+  "eth", "usdc", "uni", "wbtc",
+]);
+```
+
+</Steps>
+
+## Edge cases
+
+- **Excluded tokens** — Tokens without reliable price data are excluded silently. Check `meta.excluded_fungible_ids` and `meta.excluded_fungible_implementations` in the response.
+- **Airdrop cost basis** — Airdrops (minted from zero address) get a cost basis based on token price at time of receipt.
+- **Base asset format** — Native tokens use `chain:` with an empty address: `ethereum:` for ETH, `base:` for Base ETH, `polygon:` for MATIC.
+- **Supported currencies** — 16 options via the `currency` param: `usd`, `eur`, `gbp`, `btc`, `eth`, `krw`, `jpy`, `aud`, `cad`, `inr`, `nzd`, `try`, `zar`, `cny`, `chf`, `rub`.
+- **Batch limits** — Max 100 tokens per request for either filter mode. Paginate with multiple calls for larger portfolios.
+
+## Next steps
+
+- Combine with [wallet positions](/recipes/wallet-token-balances) to fetch current holdings, then batch those token IDs into PnL for a complete dashboard
+- Add [balance charts](/recipes/multi-chain-portfolio) to visualize portfolio value over time alongside PnL
+- Set up [webhooks](/recipes/wallet-activity-alerts) to trigger PnL recalculations when new transactions land
