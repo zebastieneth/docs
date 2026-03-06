@@ -164,7 +164,7 @@
   ],
   "integrations": {},
   "contextual": {
-    "options": []
+    "options": ["chatgpt", "claude"]
   },
   "footer": {
     "socials": {
