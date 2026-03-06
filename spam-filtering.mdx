@@ -3,7 +3,21 @@ title: "Spam Filtering"
 description: "How Zerion detects and filters spam tokens across positions and transactions."
 ---
 
-Zerion's API includes a built-in spam detection system that flags low-quality or deceptive assets using the `is_trash` flag. This lets you filter out spam tokens across endpoints like `/positions` and `/transactions` without building your own detection logic.
+Zerion's API includes a built-in spam detection system that flags low-quality or deceptive assets. Each asset includes an `is_trash` boolean in the response, which you can use to filter out spam tokens across endpoints like `/positions` and `/transactions` without building your own detection logic.
+
+```json
+{
+  "type": "positions",
+  "attributes": {
+    "fungible_info": {
+      "name": "Fake USDC",
+      "symbol": "USDC"
+    },
+    "is_trash": true,
+    "quantity": { "float": 1000.0 }
+  }
+}
+```
 
 ## How it works
 
@@ -29,7 +43,7 @@ The `filter[trash]` parameter controls spam filtering on supported endpoints:
 <Note>
 Defaults differ by endpoint:
 - **Positions**: defaults to `only_non_trash` (spam hidden)
-- **Transactions**: defaults to `no_filter` (spam included)
+- **Transactions**: defaults to `no_filter` (spam included) — transactions reflect historical on-chain activity, so spam received in the past is shown by default
 </Note>
 
 ### Examples
@@ -50,4 +64,4 @@ curl -u "YOUR_API_KEY:" \
 
 ## Reporting misclassifications
 
-If you notice an asset that's incorrectly flagged or missing a flag, [report it through support](https://dashboard.zerion.io).
+If you notice an asset that's incorrectly flagged or missing a flag, report it by clicking **Support** in the [Zerion dashboard](https://dashboard.zerion.io).

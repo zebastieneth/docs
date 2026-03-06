@@ -9,7 +9,7 @@ mode: "wide"
   <Card title="Get your API key" icon="key" href="https://dashboard.zerion.io">
     Log into the dashboard and generate a free key.
   </Card>
-  <Card title="API Reference" icon="code" href="/api-reference/wallets/get-wallets-portfolio">
+  <Card title="API Reference" icon="code" href="/api-reference/wallets/get-wallet-portfolio">
     Explore all API endpoints.
   </Card>
   <Card title="Build with AI" icon="brain-circuit" href="/build-with-ai/overview">
@@ -43,7 +43,7 @@ mode: "wide"
   <Tab title="Transaction History">
     <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", alignItems: "start"}}>
       <div>
-        <p style={{margin: 0}}>Every transaction decoded into human-readable actions — swaps, transfers, approvals, and more. Filter by type, chain, or date range.</p>
+        <p style={{margin: 0}}>Every transaction decoded into human-readable actions — trades, transfers, approvals, and more. Filter by type, chain, or date range.</p>
         <a href="/recipes/transaction-history" class="hero-cta" style={{marginTop: "1.5rem", display: "inline-flex"}}>View recipe →</a>
       </div>
       <img src="/images/transaction-history.png" alt="Zerion transaction history view" style={{maxWidth: "400px", borderRadius: "12px", margin: "0 auto"}} noZoom />
@@ -56,7 +56,7 @@ mode: "wide"
         <p style={{margin: 0}}>Track PnL at the wallet level and drill down into performance per token. Normalized to USD or any currency.</p>
         <a href="/recipes/wallet-pnl-tracker" class="hero-cta" style={{marginTop: "1.5rem", display: "inline-flex"}}>View recipe →</a>
       </div>
-      <img src="/images/transaction-history.png" alt="Zerion PnL view" style={{maxWidth: "400px", borderRadius: "12px", margin: "0 auto"}} noZoom />
+      <img src="/images/pnl.png" alt="Zerion PnL view" style={{maxWidth: "400px", borderRadius: "12px", margin: "0 auto"}} noZoom />
     </div>
   </Tab>
 
@@ -64,9 +64,9 @@ mode: "wide"
     <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", alignItems: "start"}}>
       <div>
         <p style={{margin: 0}}>Fetch NFT collections and individual tokens held by any wallet. Includes metadata, floor prices, and media across all supported chains.</p>
-        <a href="/api-reference/wallets/get-wallets-nft-positions" class="hero-cta" style={{marginTop: "1.5rem", display: "inline-flex"}}>View API reference →</a>
+        <a href="/api-reference/wallets/get-wallet-nft-positions" class="hero-cta" style={{marginTop: "1.5rem", display: "inline-flex"}}>View recipe →</a>
       </div>
-      <img src="/images/transaction-history.png" alt="Zerion NFT positions view" style={{maxWidth: "400px", borderRadius: "12px", margin: "0 auto"}} noZoom />
+      <img src="/images/nfts.png" alt="Zerion NFT positions view" style={{maxWidth: "400px", borderRadius: "12px", margin: "0 auto"}} noZoom />
     </div>
   </Tab>
 
@@ -76,7 +76,7 @@ mode: "wide"
         <p style={{margin: 0}}>Subscribe to wallet activity via webhooks and get instant notifications when transactions happen — no polling needed.</p>
         <a href="/recipes/wallet-activity-alerts" class="hero-cta" style={{marginTop: "1.5rem", display: "inline-flex"}}>View recipe →</a>
       </div>
-      <img src="/images/transaction-history.png" alt="Zerion real-time alerts view" style={{maxWidth: "400px", borderRadius: "12px", margin: "0 auto"}} noZoom />
+      <img src="/images/notifications.png" alt="Zerion real-time alerts view" style={{maxWidth: "400px", borderRadius: "12px", margin: "0 auto"}} noZoom />
     </div>
   </Tab>
 </Tabs>
@@ -89,21 +89,21 @@ Zerion API provides endpoints for wallet data, token analytics, DeFi positions, 
 
 <div style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "32px"}}>
   <div>
-    <div style={{width: "72px", height: "72px", borderRadius: "16px", background: "rgba(36, 97, 237, 0.08)", display: "flex", alignItems: "center", justifyContent: "center"}}>
+    <div style={{width: "72px", height: "72px", borderRadius: "16px", background: "rgba(48, 48, 212, 0.08)", display: "flex", alignItems: "center", justifyContent: "center"}}>
       <img src="/images/lightning.png" width="44" height="44" style={{margin: "0", objectFit: "contain"}} noZoom />
     </div>
     <p style={{marginTop: "12px", marginBottom: "4px", fontWeight: "bold", fontSize: "1.1em"}}>Always fresh</p>
     <p style={{margin: "0", lineHeight: "1.6"}}>Data updates within milliseconds of new blocks. No stale reads, no polling delays.</p>
   </div>
   <div>
-    <div style={{width: "72px", height: "72px", borderRadius: "16px", background: "rgba(36, 97, 237, 0.08)", display: "flex", alignItems: "center", justifyContent: "center"}}>
+    <div style={{width: "72px", height: "72px", borderRadius: "16px", background: "rgba(48, 48, 212, 0.08)", display: "flex", alignItems: "center", justifyContent: "center"}}>
       <img src="/images/wallet.png" width="44" height="44" style={{margin: "0", objectFit: "contain"}} noZoom />
     </div>
     <p style={{marginTop: "12px", marginBottom: "4px", fontWeight: "bold", fontSize: "1.1em"}}>Battle-tested</p>
     <p style={{margin: "0", lineHeight: "1.6"}}>Powers the Zerion app used by millions. The same infrastructure backs your project.</p>
   </div>
   <div>
-    <div style={{width: "72px", height: "72px", borderRadius: "16px", background: "rgba(36, 97, 237, 0.08)", display: "flex", alignItems: "center", justifyContent: "center"}}>
+    <div style={{width: "72px", height: "72px", borderRadius: "16px", background: "rgba(48, 48, 212, 0.08)", display: "flex", alignItems: "center", justifyContent: "center"}}>
       <img src="/images/chain.png" width="44" height="44" style={{margin: "0", objectFit: "contain"}} noZoom />
     </div>
     <p style={{marginTop: "12px", marginBottom: "4px", fontWeight: "bold", fontSize: "1.1em"}}>Unified schema</p>

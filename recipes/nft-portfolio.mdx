@@ -1,0 +1,199 @@
+---
+title: Build an NFT Portfolio Viewer
+description: Fetch a wallet's NFT holdings grouped by collection, with floor prices and chain breakdown.
+---
+
+This recipe shows how to build an NFT portfolio viewer by combining the NFT portfolio, collections, and positions endpoints to display a wallet's NFT holdings with valuations.
+
+## Prerequisites
+
+- A Zerion API key ([get one here](https://dashboard.zerion.io))
+- A wallet address to query
+
+## Steps
+
+<Steps>
+
+### Get the NFT portfolio overview
+
+Start by fetching the wallet's NFT portfolio to get total NFT value broken down by chain.
+
+<CodeGroup>
+
+```bash cURL
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/nft-portfolio?currency=usd"
+```
+
+```javascript JavaScript
+const apiKey = "YOUR_API_KEY";
+const address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
+const encoded = btoa(`${apiKey}:`);
+
+const response = await fetch(
+  `https://api.zerion.io/v1/wallets/${address}/nft-portfolio?currency=usd`,
+  { headers: { Authorization: `Basic ${encoded}` } }
+);
+
+const { data } = await response.json();
+const byChain = data.attributes.positions_distribution_by_chain;
+console.log("NFT value by chain:", byChain);
+```
+
+```python Python
+import requests
+
+api_key = "YOUR_API_KEY"
+address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+
+response = requests.get(
+    f"https://api.zerion.io/v1/wallets/{address}/nft-portfolio",
+    params={"currency": "usd"},
+    auth=(api_key, ""),
+)
+
+data = response.json()["data"]
+by_chain = data["attributes"]["positions_distribution_by_chain"]
+print("NFT value by chain:", by_chain)
+```
+
+</CodeGroup>
+
+The response includes `positions_distribution_by_chain` — a map of chain IDs to their total NFT floor value (e.g., `ethereum: 1820.50`, `polygon: 37.56`).
+
+> **Note:** The API may return a `202` status if the wallet's NFT data is still being indexed. Poll the endpoint until you receive a `200` response (stop after 2 minutes if no `200` is returned).
+
+### Fetch NFT collections
+
+Get the wallet's NFT holdings grouped by collection, sorted by total floor price.
+
+<CodeGroup>
+
+```bash cURL
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/nft-collections/?currency=usd&sort=-total_floor_price"
+```
+
+```javascript JavaScript
+const collectionsRes = await fetch(
+  `https://api.zerion.io/v1/wallets/${address}/nft-collections/?currency=usd&sort=-total_floor_price`,
+  { headers: { Authorization: `Basic ${encoded}` } }
+);
+
+const collections = await collectionsRes.json();
+
+for (const collection of collections.data) {
+  const { collection_info, nfts_count, total_floor_price } = collection.attributes;
+  console.log(
+    `${collection_info.name}: ${nfts_count} NFT(s) — floor value $${total_floor_price?.toFixed(2)}`
+  );
+}
+```
+
+```python Python
+collections_response = requests.get(
+    f"https://api.zerion.io/v1/wallets/{address}/nft-collections/",
+    params={"currency": "usd", "sort": "-total_floor_price"},
+    auth=(api_key, ""),
+)
+
+for collection in collections_response.json()["data"]:
+    attrs = collection["attributes"]
+    name = attrs.get("collection_info", {}).get("name", "Unknown")
+    count = attrs["nfts_count"]
+    floor = attrs.get("total_floor_price", 0)
+    print(f"{name}: {count} NFT(s) — floor value ${floor:.2f}")
+```
+
+</CodeGroup>
+
+Each collection entry includes:
+- `collection_info.name` — the collection name
+- `nfts_count` — how many NFTs from this collection the wallet holds
+- `total_floor_price` — combined floor value of the wallet's positions in this collection
+- `min_changed_at` / `max_changed_at` — acquisition timestamps
+
+### Fetch individual NFT positions
+
+Drill into the specific NFTs held by the wallet, sorted by floor price.
+
+<CodeGroup>
+
+```bash cURL
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/nft-positions/?currency=usd&sort=-floor_price"
+```
+
+```javascript JavaScript
+const positionsRes = await fetch(
+  `https://api.zerion.io/v1/wallets/${address}/nft-positions/?currency=usd&sort=-floor_price`,
+  { headers: { Authorization: `Basic ${encoded}` } }
+);
+
+const positions = await positionsRes.json();
+
+for (const position of positions.data) {
+  const { nft_info, collection_info, value } = position.attributes;
+  console.log(
+    `${nft_info?.name} (${collection_info?.name}) — $${value?.toFixed(2)}`
+  );
+}
+```
+
+```python Python
+positions_response = requests.get(
+    f"https://api.zerion.io/v1/wallets/{address}/nft-positions/",
+    params={"currency": "usd", "sort": "-floor_price"},
+    auth=(api_key, ""),
+)
+
+for position in positions_response.json()["data"]:
+    attrs = position["attributes"]
+    nft_name = attrs.get("nft_info", {}).get("name", "Unknown")
+    collection_name = attrs.get("collection_info", {}).get("name", "Unknown")
+    value = attrs.get("value", 0)
+    print(f"{nft_name} ({collection_name}) — ${value:.2f}")
+```
+
+</CodeGroup>
+
+Using `sort=-floor_price` orders NFTs by their floor price (highest first). Each position includes:
+- `nft_info.name` — the NFT's name or token ID
+- `collection_info.name` — the collection it belongs to
+- `value` — estimated USD value based on the collection's floor price
+
+### Filter by collection (optional)
+
+To show NFTs from a specific collection, use the `filter[collection_ids]` parameter. The collection ID is found in the `collection` field of each NFT position.
+
+```bash
+curl -u "YOUR_API_KEY:" \
+  "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/nft-positions/?currency=usd&filter[collection_ids]=bc31571c-d2a8-45e4-8012-37dbbf8b7038"
+```
+
+</Steps>
+
+## Example output
+
+```
+NFT value by chain:
+  ethereum: $1,820.50
+  polygon:  $37.56
+
+Collections:
+  Bored Ape Yacht Club:  1 NFT(s) — floor value $1,802.40
+  Art Blocks Curated:    2 NFT(s) — floor value $55.11
+  Polygon Apes:          3 NFT(s) — floor value $37.56
+
+Individual NFTs:
+  Bored Ape #7495 (Bored Ape Yacht Club)  — $1,802.40
+  Chromie Squiggle #4821 (Art Blocks)     — $37.55
+  Fidenza #479 (Art Blocks)               — $17.56
+  Polygon Ape #102 (Polygon Apes)         — $12.52
+```
+
+## Next steps
+
+- Use [pagination](/pagination-and-filtering) to handle wallets with large NFT collections
+- Include the `nft_collections` relationship in the `include` parameter to get full collection metadata in one request
+- Combine with the [transactions endpoint](/api-reference/wallets/get-wallet-transactions) to track NFT purchase and sale history

@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Zerion API",
   "colors": {
-    "primary": "#2461ED",
-    "light": "#2461ED",
-    "dark": "#2461ED"
+    "primary": "#3030D4",
+    "light": "#3030D4",
+    "dark": "#3030D4"
   },
   "favicon": "/images/favicon.png",
   "logo": {
@@ -84,7 +84,8 @@
           "recipes/wallet-token-balances",
           "recipes/transaction-history",
           "recipes/wallet-activity-alerts",
-          "recipes/wallet-pnl-tracker"
+          "recipes/wallet-pnl-tracker",
+          "recipes/nft-portfolio"
         ]
       },
       {

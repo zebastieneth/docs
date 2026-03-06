@@ -29,6 +29,7 @@ All errors return a JSON object with an `errors` array:
 | `401` | Unauthorized | Missing or invalid API key |
 | `404` | Not Found | The requested resource doesn't exist (single-resource endpoints only) |
 | `429` | Too Many Requests | Rate limit exceeded |
+| `5xx` | Server Error | Unexpected error on Zerion's side — safe to retry with backoff |
 
 ### 400 — Bad Request
 
@@ -38,8 +39,8 @@ Returned when query parameters are malformed or invalid. Check the `detail` fiel
 {
   "errors": [
     {
-      "title": "Parameter is malformed",
-      "detail": "Some validation errors will be described here"
+      "title": "Malformed parameter was sent",
+      "detail": "chain {invalidchain} is not supported"
     }
   ]
 }
@@ -83,8 +84,8 @@ Returned on single-resource endpoints when the ID doesn't match any record.
 {
   "errors": [
     {
-      "title": "Resource was not found",
-      "detail": "Requested resource was not found, try later"
+      "title": "Requested fungible was not found",
+      "detail": "You have requested fungible which does not exist"
     }
   ]
 }
@@ -107,19 +108,11 @@ Returned when you exceed your plan's rate limit.
 }
 ```
 
+Implement exponential backoff when retrying. If you're hitting rate limits consistently, you can upgrade your plan for higher limits directly in the [Zerion developer dashboard](https://dashboard.zerion.io).
+
 ## Best practices
 
-<AccordionGroup>
-  <Accordion title="Use exponential backoff for retries">
-    When retrying after a `429` or `5xx` error, increase the delay between attempts exponentially (e.g., 1s, 2s, 4s). This prevents overwhelming the API during high-traffic periods.
-  </Accordion>
-  <Accordion title="Only retry on appropriate status codes">
-    Retry on `429` (rate limit) and `5xx` (server errors). Do **not** retry `400` (bad request) or `401` (unauthorized) — these require fixing the request itself.
-  </Accordion>
-  <Accordion title="Validate parameters before sending">
-    Check that `page[size]` is between 1–100, timestamps are 13-digit milliseconds, and chain IDs match the [supported chains](/supported-blockchains). This avoids unnecessary `400` errors.
-  </Accordion>
-  <Accordion title="Use webhooks instead of polling">
-    If you need to monitor wallet activity, use [transaction subscriptions](/api-reference/tx-subscriptions/create-subscription-wallet-transactions) instead of polling the transactions endpoint. This reduces your API usage and gives you faster notifications.
-  </Accordion>
-</AccordionGroup>
+- **Retry on `429` and `5xx` only.** Do not retry `400` or `401` — these require fixing the request itself.
+- **Use exponential backoff.** When retrying, increase the delay between attempts exponentially (e.g., 1s, 2s, 4s) to avoid overwhelming the API.
+- **Validate parameters before sending.** Check that `page[size]` is between 1–100, timestamps are 13-digit milliseconds, and chain IDs match the [supported chains](/supported-blockchains). This avoids unnecessary `400` errors.
+- **Use webhooks instead of polling.** If you need to monitor wallet activity, use [transaction subscriptions](/api-reference/subscriptions-to-transactions/create-subscription) instead of polling. This reduces API usage and gives you faster notifications.

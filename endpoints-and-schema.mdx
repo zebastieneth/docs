@@ -1,95 +1,47 @@
 ---
 title: "Endpoints & Schema"
-description: "Overview of all Zerion API endpoint categories, response schemas, and how to explore the API structure."
+description: "Overview of all Zerion API endpoint categories and response structure."
 ---
 
-The Zerion API provides real-time, normalized access to onchain data through a set of RESTful endpoints. Each endpoint returns structured JSON following the [JSON:API](https://jsonapi.org/) specification, with consistent patterns for pagination, filtering, and relationships.
+The Zerion API provides real-time, normalized access to onchain data through RESTful endpoints. All requests go to `https://api.zerion.io` and require [authentication](/authentication) via HTTP Basic Auth. Responses follow the [JSON:API](https://jsonapi.org/) specification.
 
 ## Endpoint categories
 
 ### Wallets
 
-The wallets endpoint is fundamental to building wallet applications. It provides access to:
-
-- **Portfolio** — Aggregated wallet value across all chains and positions
-- **Positions** — Individual token holdings, DeFi protocol positions, and NFTs with valuations
-- **Transactions** — Full parsed transaction history with human-readable interpretations
-- **Charts** — Historical portfolio value over configurable time periods
-
-```bash
-# Get a wallet's complete portfolio
-curl -u "YOUR_API_KEY:" \
-  "https://api.zerion.io/v1/wallets/0xd8dA.../portfolio"
-```
+Portfolio, positions, transactions, PnL, and NFTs — all scoped to a wallet address. This is the core of the API. Positions include both fungible tokens and DeFi protocol positions. NFT data is split into individual holdings, collections, and a portfolio summary.
 
 ### Fungibles
 
-Returns metadata, pricing, and market data for fungible tokens. Supports both paginated lists and individual lookups by unique identifier.
-
-- List and search fungible assets with filters
-- Get detailed info for a specific token by ID
-- Retrieve price charts over multiple time periods
-- Look up tokens by chain and contract address
-
-```bash
-# Get token details by ID
-curl -u "YOUR_API_KEY:" \
-  "https://api.zerion.io/v1/fungibles/eth"
-```
+Token metadata, pricing, and market data. Search and filter across all supported tokens, look up by Zerion ID or by chain and contract address, and fetch historical price charts.
 
 ### Chains
 
-Provides a complete list of all supported blockchains and enables lookup by chain identifier. Use this to dynamically populate chain selectors or validate chain IDs before making other API calls.
-
-```bash
-# List all supported chains
-curl -u "YOUR_API_KEY:" \
-  "https://api.zerion.io/v1/chains"
-```
+The full list of supported blockchains with metadata. Useful for populating chain selectors or validating chain IDs before making other calls.
 
 ### NFTs
 
-Access NFT data including individual tokens and collections. Requires specifying references (wallet address or collection) to scope results.
-
-```bash
-# Get NFTs for a wallet
-curl -u "YOUR_API_KEY:" \
-  "https://api.zerion.io/v1/wallets/0xd8dA.../nft-positions"
-```
+Look up individual NFTs by reference or unique ID, with support for batch fetching.
 
 ### Swap & Bridge
 
-Get quotes and execute cross-chain swaps through a single unified interface. The API handles routing across DEXs and bridges.
+Quotes for token swaps and cross-chain bridges, routed across DEXs and bridge protocols. First check which tokens are available for a route, then request offers.
 
-### Gas
+### Gas Prices
 
-Retrieve current gas price estimates for supported chains, useful for displaying fee estimates or optimizing transaction timing.
-
-```bash
-# Get gas prices for Ethereum
-curl -u "YOUR_API_KEY:" \
-  "https://api.zerion.io/v1/chains/ethereum/gas-prices"
-```
+Current gas price estimates across all supported chains. Useful for displaying fee estimates or optimizing transaction timing.
 
 ### DApps
 
-Look up metadata for decentralized applications, including names, icons, and categories. DApp info appears in position and transaction data to provide context.
+Metadata for decentralized applications — names, icons, and categories. DApp info is also embedded in position and transaction responses to provide context.
 
 ### Subscriptions (Webhooks)
 
-Create and manage webhook subscriptions to receive real-time notifications when wallet transactions occur — no polling required.
+Push-based notifications for wallet activity — no polling required. Create subscriptions, manage which wallets and chains to monitor, and update webhook URLs. See the [API Reference](/api-reference/subscriptions-to-transactions/create-subscription) for the full set of subscription management endpoints.
 
-```bash
-# Create a transaction subscription
-curl -u "YOUR_API_KEY:" \
-  -X POST "https://api.zerion.io/v1/wallets/0xd8dA.../transaction-subscriptions" \
-  -H "Content-Type: application/json" \
-  -d '{"data": {"type": "transaction-subscriptions", "attributes": {"webhook_url": "https://your-app.com/webhook"}}}'
-```
+## Response structure
 
-## Response schema
-
-All responses follow a consistent structure:
+Every response follows a consistent JSON:API format:
 
 ```json
 {
@@ -97,44 +49,34 @@ All responses follow a consistent structure:
     "self": "https://api.zerion.io/v1/...",
     "next": "https://api.zerion.io/v1/...?page[after]=..."
   },
-  "data": [
-    {
-      "type": "resource-type",
-      "id": "unique-id",
-      "attributes": { },
-      "relationships": { }
-    }
-  ]
+  "data": {
+    "type": "positions",
+    "id": "unique-id",
+    "attributes": { ... },
+    "relationships": { ... }
+  }
 }
 ```
 
 | Field | Description |
 |-------|-------------|
-| `links` | Pagination links — `self` for the current page, `next` for the next page (if available) |
-| `data` | Array of resource objects (or a single object for detail endpoints) |
-| `type` | Resource type identifier (e.g., `positions`, `transactions`, `fungibles`) |
+| `links` | Pagination — `self` for the current page, `next` for the next page |
+| `data` | A single resource object or an array of them |
+| `type` | Resource type (e.g., `positions`, `transactions`, `fungibles`) |
 | `id` | Unique identifier for the resource |
 | `attributes` | The resource's data fields |
-| `relationships` | Related resources with links for fetching |
+| `relationships` | Links to related resources |
 
-### Exploring schemas in the docs
+## Next steps
 
-Each endpoint in the [REST API Reference](/api-reference) section includes:
-
-- **Interactive playground** — Send real requests and inspect responses directly in the browser
-- **Response examples** — Click on response status codes (200, 400, etc.) to see example payloads
-- **Schema details** — Expand any field to see its type, description, and whether it's nullable
-
-<Tip>
-Use the dropdown menus on response examples to switch between different response codes and see the full schema for each case.
-</Tip>
-
-## OpenAPI specification
-
-The full API is defined in an OpenAPI 3.0.3 specification. You can use it to:
-
-- Generate client libraries in any language
-- Import into tools like Postman or Insomnia
-- Power AI assistants via [MCP](/build-with-ai)
-
-The spec is always kept in sync with the live API and powers the interactive documentation you see in the REST API Reference section.
+<CardGroup cols={3}>
+  <Card title="Pagination & Filtering" icon="filter" href="/pagination-and-filtering">
+    Paginate results and apply filters.
+  </Card>
+  <Card title="Error Handling" icon="circle-exclamation" href="/error-handling">
+    Error codes and how to handle them.
+  </Card>
+  <Card title="Rate Limits" icon="gauge" href="/rate-limits">
+    Request limits and how to stay within them.
+  </Card>
+</CardGroup>

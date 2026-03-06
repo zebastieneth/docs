@@ -1,6 +1,6 @@
 # Zerion API Documentation
 
-Documentation for the [Zerion API](https://developers.zerion.io), built with [Mintlify](https://mintlify.com).
+Documentation for the [Zerion API](https://dashboard.zerion.io), built with [Mintlify](https://mintlify.com).
 
 ## Local development
 
@@ -41,4 +41,4 @@ docs/
 ## Useful links
 
 - [Mintlify docs](https://mintlify.com/docs)
-- [Zerion Developer Portal](https://developers.zerion.io)
+- [Zerion Developer Portal](https://dashboard.zerion.io)

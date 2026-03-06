@@ -8,46 +8,46 @@ description: "Get your API key and make your first request in under 5 minutes."
 <Tabs>
   <Tab title="Wallet Data">
     <CardGroup cols={2}>
-      <Card title="Get a wallet portfolio" icon="chart-pie" href="/api-reference/wallets/get-wallets-portfolio">
+      <Card title="Get a wallet portfolio" icon="chart-pie" href="/api-reference/wallets/get-wallet-portfolio">
         Total value, position breakdown, and daily changes for any address.
       </Card>
-      <Card title="List fungible positions" icon="coins" href="/api-reference/wallets/list-wallet-positions">
+      <Card title="List fungible positions" icon="coins" href="/api-reference/wallets/get-wallet-fungible-positions">
         Every token a wallet holds with quantities and USD values.
       </Card>
-      <Card title="View DeFi positions" icon="layer-group" href="/api-reference/wallets/list-wallet-positions">
+      <Card title="View DeFi positions" icon="layer-group" href="/api-reference/wallets/get-wallet-fungible-positions">
         Lending, staking, and liquidity positions across protocols.
       </Card>
-      <Card title="NFT positions" icon="image" href="/api-reference/wallets/list-wallet-nft-positions">
+      <Card title="NFT positions" icon="image" href="/api-reference/wallets/get-wallet-nft-positions">
         NFT holdings with metadata, floor prices, and collection info.
       </Card>
     </CardGroup>
   </Tab>
   <Tab title="Transactions">
     <CardGroup cols={2}>
-      <Card title="Get parsed transactions" icon="clock-rotate-left" href="/api-reference/wallets/list-wallet-transactions">
+      <Card title="Get parsed transactions" icon="clock-rotate-left" href="/api-reference/wallets/get-wallet-transactions">
         Human-readable transaction history with filters by type, chain, and date.
       </Card>
-      <Card title="Subscribe to webhooks" icon="bell" href="/api-reference/tx-subscriptions/create-subscription-wallet-transactions">
+      <Card title="Subscribe to webhooks" icon="bell" href="/api-reference/subscriptions-to-transactions/create-subscription">
         Instant notifications when wallet transactions occur — no polling.
       </Card>
     </CardGroup>
   </Tab>
   <Tab title="Market Data">
     <CardGroup cols={2}>
-      <Card title="Search fungible tokens" icon="magnifying-glass" href="/api-reference/fungibles/list-fungibles">
+      <Card title="Search fungible tokens" icon="magnifying-glass" href="/api-reference/fungibles/get-list-of-fungible-assets">
         Look up any token by name, get prices, charts, and market data.
       </Card>
-      <Card title="Token charts" icon="chart-line" href="/api-reference/fungibles/get-fungible-chart">
+      <Card title="Token charts" icon="chart-line" href="/api-reference/fungibles/get-a-chart-for-a-fungible-asset">
         Historical price and market cap charts for any token.
       </Card>
     </CardGroup>
   </Tab>
   <Tab title="Trading">
     <CardGroup cols={2}>
-      <Card title="Get swap quotes" icon="arrow-right-arrow-left" href="/api-reference/swap/swap-fungibles">
+      <Card title="Get swap quotes" icon="arrow-right-arrow-left" href="/api-reference/swap/get-available-swap-offers">
         Fetch the best swap and bridge offers across chains.
       </Card>
-      <Card title="Check gas prices" icon="gas-pump" href="/api-reference/gas-prices/list-gas-prices">
+      <Card title="Check gas prices" icon="gas-pump" href="/api-reference/gas/get-list-of-all-available-gas-prices">
         Current gas prices across all supported chains.
       </Card>
     </CardGroup>
@@ -60,10 +60,10 @@ description: "Get your API key and make your first request in under 5 minutes."
 
 <Steps>
   <Step title="Get your API key">
-    Sign up at [developers.zerion.io](https://developers.zerion.io) and create an API key from the dashboard. It's free to start.
+    Sign up at [dashboard.zerion.io](https://dashboard.zerion.io) and create an API key from the dashboard. It's free to start.
   </Step>
   <Step title="Try it from the docs">
-    The fastest way to test the API is right here in the docs. Open any [API reference](/api-reference/wallets/get-wallets-portfolio) page, enter your API key in the **Username** field, leave **Password** empty, and hit **Send**.
+    The fastest way to test the API is right here in the docs. Open any [API reference](/api-reference/wallets/get-wallet-portfolio) page, click **Try it**, enter your API key in the **Username** field, leave **Password** empty, and hit **Send**.
   </Step>
   <Step title="Make a request from your code">
     The API uses HTTP Basic Auth — your API key is the username, password is empty. Let's fetch a wallet portfolio:
@@ -71,36 +71,72 @@ description: "Get your API key and make your first request in under 5 minutes."
     <CodeGroup>
 
     ```bash cURL
-    curl -u "YOUR_API_KEY:" \
-      "https://api.zerion.io/v1/wallets/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045/portfolio"
+    # Transform your API key for Basic Auth
+    API_KEY_TRANSFORMED=$(echo -n "YOUR_API_KEY:" | base64)
+
+    # Make the request
+    curl -X GET "https://api.zerion.io/v1/wallets/0x42b9df65b219b3dd36ff330a4dd8f327a6ada990/portfolio" \
+      -H "Authorization: Basic $API_KEY_TRANSFORMED" \
+      -H "accept: application/json"
     ```
 
     ```javascript JavaScript
-    const apiKey = "YOUR_API_KEY";
-    const address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
+    // Transform your API key for Basic Auth
+    const apiKey = 'YOUR_API_KEY';
+    const apiKeyTransformed = btoa(apiKey + ':');
 
+    // Make the request
     const response = await fetch(
-      `https://api.zerion.io/v1/wallets/${address}/portfolio`,
-      { headers: { Authorization: `Basic ${btoa(`${apiKey}:`)}` } }
+      'https://api.zerion.io/v1/wallets/0x42b9df65b219b3dd36ff330a4dd8f327a6ada990/portfolio',
+      {
+        headers: {
+          'Authorization': `Basic ${apiKeyTransformed}`,
+          'accept': 'application/json'
+        }
+      }
     );
-
-    const { data } = await response.json();
-    console.log(`Total positions: ${data.attributes.total.positions}`);
+    const data = await response.json();
+    console.log(data);
     ```
 
     ```python Python
     import requests
+    import base64
 
-    api_key = "YOUR_API_KEY"
-    address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+    # Transform your API key for Basic Auth
+    api_key = 'YOUR_API_KEY'
+    api_key_transformed = base64.b64encode(f'{api_key}:'.encode()).decode()
 
+    # Make the request
     response = requests.get(
-        f"https://api.zerion.io/v1/wallets/{address}/portfolio",
-        auth=(api_key, "")
+        'https://api.zerion.io/v1/wallets/0x42b9df65b219b3dd36ff330a4dd8f327a6ada990/portfolio',
+        headers={
+            'Authorization': f'Basic {api_key_transformed}',
+            'accept': 'application/json'
+        }
+    )
+    data = response.json()
+    print(data)
+    ```
+
+    ```go Go
+    import (
+        "encoding/base64"
+        "net/http"
     )
 
-    data = response.json()["data"]
-    print(f"Total positions: {data['attributes']['total']['positions']}")
+    // Transform your API key for Basic Auth
+    apiKey := "YOUR_API_KEY"
+    apiKeyTransformed := base64.StdEncoding.EncodeToString([]byte(apiKey + ":"))
+
+    // Make the request
+    client := &http.Client{}
+    req, _ := http.NewRequest("GET", "https://api.zerion.io/v1/wallets/0x42b9df65b219b3dd36ff330a4dd8f327a6ada990/portfolio", nil)
+    req.Header.Set("Authorization", "Basic " + apiKeyTransformed)
+    req.Header.Set("accept", "application/json")
+
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
     ```
 
     </CodeGroup>
@@ -112,7 +148,7 @@ description: "Get your API key and make your first request in under 5 minutes."
     {
       "data": {
         "type": "portfolios",
-        "id": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+        "id": "0x42b9df65b219b3dd36ff330a4dd8f327a6ada990",
         "attributes": {
           "positions_distribution_by_type": {
             "wallet": 0.85,
@@ -147,6 +183,6 @@ description: "Get your API key and make your first request in under 5 minutes."
     Step-by-step guides for common use cases.
   </Card>
   <Card title="Supported Blockchains" icon="link" href="/supported-blockchains">
-    Full list of 15+ supported chains and feature coverage.
+    Full list of supported chains and feature coverage.
   </Card>
 </CardGroup>

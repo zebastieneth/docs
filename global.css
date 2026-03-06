@@ -102,7 +102,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.625rem 1.5rem;
-  background-color: #2461ED;
+  background-color: #3030D4;
   color: white !important;
   border-radius: 0.625rem;
   font-weight: 500;
@@ -116,7 +116,7 @@
 }
 
 .hero-cta:hover {
-  background-color: #1b4fd4;
+  background-color: #2828B0;
   color: white !important;
   text-decoration: none !important;
   border: none !important;
@@ -140,7 +140,7 @@
 
 .stat-badge strong {
   font-size: 1.25rem;
-  color: #2461ED;
+  color: #3030D4;
 }
 
 .stat-badge span {

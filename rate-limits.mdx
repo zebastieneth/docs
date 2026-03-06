@@ -1,13 +1,13 @@
 ---
 title: "Rate Limits"
-description: "Understand rate limits, monitor your usage, and handle throttled requests."
+description: "Understand rate limits and handle throttled requests."
 ---
 
 Rate limits depend on your plan. Visit the [Dashboard](https://dashboard.zerion.io) for your current limits and upgrade options.
 
 ## Monitoring usage
 
-Check the `X-RateLimit-*` headers in every API response to track your consumption in real time.
+Usage monitoring is coming soon to the [Dashboard](https://dashboard.zerion.io). In the meantime, click **Support** in the Dashboard to get in touch — we can provide access to a usage report on request.
 
 ## When you hit the limit
 
@@ -68,6 +68,6 @@ def fetch_with_retry(url, api_key, max_retries=3):
 
 ## Tips to stay under the limit
 
-- **Use webhooks instead of polling** — [transaction subscriptions](/api-reference/tx-subscriptions/create-subscription-wallet-transactions) give you real-time updates without repeated requests
+- **Use webhooks instead of polling** — [transaction subscriptions](/api-reference/subscriptions-to-transactions/create-subscription) give you real-time updates without repeated requests
 - **Cache responses** where data doesn't change frequently (e.g., chain lists, token metadata)
 - **Use filters and pagination** to fetch only the data you need — smaller requests, fewer calls
