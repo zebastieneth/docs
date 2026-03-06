@@ -162,7 +162,11 @@
     { "source": "/recipes/how-to-build-a-multichain-transaction-history-like-zerion", "destination": "/recipes/transaction-history" },
     { "source": "/changelog/:slug*", "destination": "/changelog" }
   ],
-  "integrations": {},
+  "integrations": {
+    "posthog": {
+      "apiKey": "phc_KpX0ph71XObDhlXXMKoAzXMtXYiNMMtDhuA8GvvudZI"
+    }
+  },
   "contextual": {
     "options": ["chatgpt", "claude"]
   },
